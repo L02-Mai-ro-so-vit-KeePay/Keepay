@@ -4,7 +4,10 @@ import type { User } from '../entities/Session';
 import type { AuthRepository, SessionStore } from '../repositories/AuthRepository';
 
 export class LoginUseCase {
-  constructor(private readonly repo: AuthRepository, private readonly store: SessionStore) {}
+  constructor(
+    private readonly repo: AuthRepository,
+    private readonly store: SessionStore,
+  ) {}
   async execute(raw: { email: string; password: string }): Promise<User> {
     const input = parseOrThrow(loginSchema, { ...raw, email: raw.email.trim() });
     const session = await this.repo.login(input);
@@ -14,7 +17,10 @@ export class LoginUseCase {
 }
 
 export class RegisterUseCase {
-  constructor(private readonly repo: AuthRepository, private readonly store: SessionStore) {}
+  constructor(
+    private readonly repo: AuthRepository,
+    private readonly store: SessionStore,
+  ) {}
   async execute(raw: { email: string; password: string; displayName: string }): Promise<User> {
     const input = parseOrThrow(registerSchema, {
       ...raw,
@@ -36,7 +42,10 @@ export class LogoutUseCase {
 
 /** Khôi phục phiên khi mở app: có token và token còn hợp lệ -> trả về user, ngược lại null. */
 export class RestoreSessionUseCase {
-  constructor(private readonly repo: AuthRepository, private readonly store: SessionStore) {}
+  constructor(
+    private readonly repo: AuthRepository,
+    private readonly store: SessionStore,
+  ) {}
   async execute(): Promise<User | null> {
     if (!(await this.store.hasSession())) return null;
     try {

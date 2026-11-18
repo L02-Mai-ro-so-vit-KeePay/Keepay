@@ -26,7 +26,9 @@ export function GroupListScreen() {
         keyExtractor={(g) => g.id}
         refreshing={status === 'loading'}
         onRefresh={() => void dispatch(fetchGroups())}
-        ListEmptyComponent={<Text style={styles.empty}>Chưa có nhóm nào. Hãy tạo nhóm đầu tiên!</Text>}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Chưa có nhóm nào. Hãy tạo nhóm đầu tiên!</Text>
+        }
         renderItem={({ item }) => (
           <Pressable style={styles.card} onPress={() => router.push(`/group/${item.id}`)}>
             <Text style={styles.name}>{item.name}</Text>
@@ -41,7 +43,14 @@ export function GroupListScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, padding: 16, backgroundColor: colors.background, gap: 12 },
-  card: { backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: colors.border },
+  card: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
   name: { fontSize: 17, fontWeight: '600', color: colors.text },
   meta: { color: colors.muted, marginTop: 4 },
   empty: { color: colors.muted, textAlign: 'center', marginTop: 40 },

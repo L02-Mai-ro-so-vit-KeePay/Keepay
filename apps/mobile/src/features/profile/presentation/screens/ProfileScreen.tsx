@@ -32,7 +32,6 @@ export function ProfileScreen() {
         setAccountHolder(p.bankAccount.accountHolder);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submit = async () => {
@@ -49,11 +48,25 @@ export function ProfileScreen() {
       <Text style={{ fontSize: 22, fontWeight: '700' }}>{name}</Text>
       <Text style={{ marginTop: 16, fontWeight: '600' }}>Tài khoản nhận tiền (để tạo VietQR)</Text>
       <MemberChips members={bankOptions} selectedIds={[bankBin]} onToggle={setBankBin} />
-      <TextField label="Số tài khoản" value={accountNumber} onChangeText={setAccountNumber} keyboardType="number-pad" />
-      <TextField label="Tên chủ tài khoản" value={accountHolder} onChangeText={setAccountHolder} autoCapitalize="characters" />
+      <TextField
+        label="Số tài khoản"
+        value={accountNumber}
+        onChangeText={setAccountNumber}
+        keyboardType="number-pad"
+      />
+      <TextField
+        label="Tên chủ tài khoản"
+        value={accountHolder}
+        onChangeText={setAccountHolder}
+        autoCapitalize="characters"
+      />
       <ErrorText message={load.error ?? save.error} />
       {saved && <Text>Đã lưu ✔</Text>}
-      <Button title="Lưu tài khoản ngân hàng" loading={save.loading} onPress={() => void submit()} />
+      <Button
+        title="Lưu tài khoản ngân hàng"
+        loading={save.loading}
+        onPress={() => void submit()}
+      />
       <Button title="Đăng xuất" variant="secondary" onPress={() => void dispatch(logout())} />
     </Screen>
   );

@@ -20,10 +20,25 @@ export function RegisterScreen() {
     <Screen>
       <Text style={styles.title}>Tạo tài khoản</Text>
       <TextField label="Tên hiển thị" value={displayName} onChangeText={setDisplayName} />
-      <TextField label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-      <TextField label="Mật khẩu (tối thiểu 8 ký tự)" value={password} onChangeText={setPassword} secureTextEntry />
+      <TextField
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
+      <TextField
+        label="Mật khẩu (tối thiểu 8 ký tự)"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
       <ErrorText message={error} />
-      <Button title="Đăng ký" loading={status === 'submitting'} onPress={() => void dispatch(register({ email, password, displayName }))} />
+      <Button
+        title="Đăng ký"
+        loading={status === 'submitting'}
+        onPress={() => void dispatch(register({ email, password, displayName }))}
+      />
       <Pressable onPress={() => router.replace('/login')}>
         <Text style={styles.link}>Đã có tài khoản? Đăng nhập</Text>
       </Pressable>
@@ -32,6 +47,12 @@ export function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: '700', color: colors.text, marginVertical: 24, textAlign: 'center' },
+  title: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: colors.text,
+    marginVertical: 24,
+    textAlign: 'center',
+  },
   link: { color: colors.primary, textAlign: 'center', marginTop: 16 },
 });

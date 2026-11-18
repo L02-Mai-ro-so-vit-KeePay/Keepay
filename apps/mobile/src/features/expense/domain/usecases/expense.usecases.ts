@@ -21,7 +21,9 @@ export class CreateExpenseUseCase {
 
   execute(cmd: CreateExpenseCommand) {
     const splits =
-      cmd.split.type === 'equal' ? this.equalSplit(cmd.amount, cmd.split.userIds) : cmd.split.splits;
+      cmd.split.type === 'equal'
+        ? this.equalSplit(cmd.amount, cmd.split.userIds)
+        : cmd.split.splits;
     const input = parseOrThrow(createExpenseSchema, {
       description: cmd.description.trim(),
       amount: cmd.amount,

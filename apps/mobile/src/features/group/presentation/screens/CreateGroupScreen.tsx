@@ -18,7 +18,12 @@ export function CreateGroupScreen() {
 
   return (
     <Screen>
-      <TextField label="Tên nhóm" value={name} onChangeText={setName} placeholder="VD: Đà Lạt 3N2Đ" />
+      <TextField
+        label="Tên nhóm"
+        value={name}
+        onChangeText={setName}
+        placeholder="VD: Đà Lạt 3N2Đ"
+      />
       <ErrorText message={error} />
       <Button title="Tạo nhóm" loading={loading} onPress={() => void submit()} />
     </Screen>

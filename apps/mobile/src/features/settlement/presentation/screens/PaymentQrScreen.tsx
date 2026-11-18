@@ -24,8 +24,9 @@ export function PaymentQrScreen({ groupId, toUserId, amount }: Props) {
   const confirm = useAsyncAction();
 
   useEffect(() => {
-    void load.run(async () => setQr(await container.settlement.paymentQr.execute(groupId, { toUserId, amount })));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void load.run(async () =>
+      setQr(await container.settlement.paymentQr.execute(groupId, { toUserId, amount })),
+    );
   }, [groupId, toUserId, amount]);
 
   const markPaid = async () => {
@@ -39,14 +40,22 @@ export function PaymentQrScreen({ groupId, toUserId, amount }: Props) {
 
   return (
     <Screen>
-      <Text style={{ fontSize: 22, fontWeight: '700', textAlign: 'center' }}>{formatCurrency(amount)}</Text>
+      <Text style={{ fontSize: 22, fontWeight: '700', textAlign: 'center' }}>
+        {formatCurrency(amount)}
+      </Text>
       <ErrorText message={load.error ?? confirm.error} />
       {qr && (
         <>
           <VietQRViewer value={qr.payload} />
           <Text style={{ textAlign: 'center' }}>Người nhận: {qr.recipient.accountHolder}</Text>
-          <Text style={{ textAlign: 'center', opacity: 0.6 }}>Mở app ngân hàng và quét mã VietQR này</Text>
-          <Button title="Tôi đã chuyển tiền" loading={confirm.loading} onPress={() => void markPaid()} />
+          <Text style={{ textAlign: 'center', opacity: 0.6 }}>
+            Mở app ngân hàng và quét mã VietQR này
+          </Text>
+          <Button
+            title="Tôi đã chuyển tiền"
+            loading={confirm.loading}
+            onPress={() => void markPaid()}
+          />
         </>
       )}
     </Screen>

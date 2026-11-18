@@ -46,7 +46,9 @@ export function simplifyDebts(net: Record<string, number>): DebtEdge[] {
   const byAmountThenId = (a: [string, number], b: [string, number]) =>
     b[1] - a[1] || a[0].localeCompare(b[0]);
 
-  const creditors = Object.entries(net).filter(([, v]) => v > 0).sort(byAmountThenId);
+  const creditors = Object.entries(net)
+    .filter(([, v]) => v > 0)
+    .sort(byAmountThenId);
   const debtors = Object.entries(net)
     .filter(([, v]) => v < 0)
     .map(([id, v]) => [id, -v] as [string, number])

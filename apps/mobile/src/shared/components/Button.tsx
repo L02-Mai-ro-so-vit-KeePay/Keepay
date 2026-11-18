@@ -16,7 +16,11 @@ export function Button({ title, onPress, loading, disabled, variant = 'primary' 
       accessibilityRole="button"
       onPress={onPress}
       disabled={disabled || loading}
-      style={[styles.base, secondary ? styles.secondary : styles.primary, (disabled || loading) && styles.disabled]}
+      style={[
+        styles.base,
+        secondary ? styles.secondary : styles.primary,
+        (disabled || loading) && styles.disabled,
+      ]}
     >
       {loading ? (
         <ActivityIndicator color={secondary ? colors.primary : '#fff'} />

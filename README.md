@@ -65,9 +65,11 @@ npm run start:dev -w @keepay/server
 ```
 
 Mở terminal khác để chạy mobile:
+
 ```bash
 npm run start -w @keepay/mobile
 ```
+
 Quét QR bằng app **Expo Go**, hoặc bấm `a` (Android emulator) / `i` (iOS simulator). Nếu chạy
 Android emulator, sửa `apps/mobile/.env` → `EXPO_PUBLIC_API_URL=http://10.0.2.2:3000/api/v1`
 (emulator không thấy `localhost` của máy host qua tên đó).
@@ -117,7 +119,7 @@ Nguyên tắc chốt cho toàn bộ codebase:
   chỉ biết interface, không biết Prisma tồn tại. Nhờ vậy test được bằng repository giả (in-memory)
   mà không cần Postgres thật đang chạy.
 - **Mobile**: mỗi feature (`auth`, `group`, `expense`...) tự chứa đủ 3 tầng `presentation / domain /
-  data`. Tầng `domain` (use case) là TypeScript thuần, **không import React hay axios** — nên test
+data`. Tầng `domain` (use case) là TypeScript thuần, **không import React hay axios** — nên test
   được bằng Vitest thường, không cần simulator. Route (`src/app/`) chỉ 1-2 dòng, import screen từ
   `features/*/presentation/screens`.
 
@@ -209,21 +211,21 @@ Toàn bộ số tiền lưu dạng **số nguyên VND** (không dùng float) đ�
 
 Tất cả endpoint có prefix `/api/v1`. Route có 🔒 yêu cầu header `Authorization: Bearer <token>`.
 
-| Method | Path | Mô tả |
-|---|---|---|
-| GET | `/health` | Kiểm tra server sống |
-| POST | `/auth/register` | Đăng ký — trả về `{ accessToken, user }` |
-| POST | `/auth/login` | Đăng nhập |
-| 🔒 GET | `/users/me` | Hồ sơ + tài khoản ngân hàng của chính mình |
-| 🔒 PUT | `/users/me/bank-account` | Lưu/cập nhật tài khoản nhận tiền (để sinh VietQR) |
-| 🔒 POST | `/groups` | Tạo nhóm (`{ name, memberIds }`) |
-| 🔒 GET | `/groups` | Danh sách nhóm mình tham gia |
-| 🔒 GET | `/groups/:groupId` | Chi tiết nhóm, kèm tên từng thành viên |
-| 🔒 POST | `/groups/:groupId/members` | Mời thành viên bằng `{ email }` |
-| 🔒 POST | `/groups/:groupId/expenses` | Tạo khoản chi (`{ description, amount, paidById, splits }`) |
-| 🔒 GET | `/groups/:groupId/expenses` | Danh sách khoản chi của nhóm |
-| 🔒 GET | `/groups/:groupId/balances` | `{ net, debts }` — số dư từng người + nợ đã rút gọn |
-| 🔒 POST | `/groups/:groupId/payment-qr` | Sinh payload VietQR (`{ toUserId, amount }`) |
+| Method  | Path                           | Mô tả                                                       |
+| ------- | ------------------------------ | ----------------------------------------------------------- |
+| GET     | `/health`                      | Kiểm tra server sống                                        |
+| POST    | `/auth/register`               | Đăng ký — trả về `{ accessToken, user }`                    |
+| POST    | `/auth/login`                  | Đăng nhập                                                   |
+| 🔒 GET  | `/users/me`                    | Hồ sơ + tài khoản ngân hàng của chính mình                  |
+| 🔒 PUT  | `/users/me/bank-account`       | Lưu/cập nhật tài khoản nhận tiền (để sinh VietQR)           |
+| 🔒 POST | `/groups`                      | Tạo nhóm (`{ name, memberIds }`)                            |
+| 🔒 GET  | `/groups`                      | Danh sách nhóm mình tham gia                                |
+| 🔒 GET  | `/groups/:groupId`             | Chi tiết nhóm, kèm tên từng thành viên                      |
+| 🔒 POST | `/groups/:groupId/members`     | Mời thành viên bằng `{ email }`                             |
+| 🔒 POST | `/groups/:groupId/expenses`    | Tạo khoản chi (`{ description, amount, paidById, splits }`) |
+| 🔒 GET  | `/groups/:groupId/expenses`    | Danh sách khoản chi của nhóm                                |
+| 🔒 GET  | `/groups/:groupId/balances`    | `{ net, debts }` — số dư từng người + nợ đã rút gọn         |
+| 🔒 POST | `/groups/:groupId/payment-qr`  | Sinh payload VietQR (`{ toUserId, amount }`)                |
 | 🔒 POST | `/groups/:groupId/settlements` | Ghi nhận đã thanh toán (`{ fromUserId, toUserId, amount }`) |
 
 Body request được validate bằng đúng schema trong `packages/shared/src/schemas` — xem file đó để
@@ -296,6 +298,7 @@ và khi cần đổi từ REST sang GraphQL sau này thì chỉ viết lại `da
 ### Thêm một feature mới (quy trình chuẩn)
 
 Copy cấu trúc của `features/expense` (feature vừa đủ phức tạp để làm mẫu):
+
 1. `domain/entities` → kiểu dữ liệu.
 2. `domain/repositories` → interface.
 3. `domain/usecases` → logic + validate, kèm `*.test.ts`.
@@ -346,6 +349,7 @@ git status --porcelain | grep -E "node_modules|dist/|\.expo/|coverage/|\.env$"
 ```
 
 Sau đó:
+
 ```bash
 git commit -m "chore: scaffold KeePay monorepo"
 git remote add origin <url-repo-của-bạn>

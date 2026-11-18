@@ -3,7 +3,9 @@ import { splitByPercent, splitEqually, sumSplits } from './splits';
 
 describe('splitEqually', () => {
   it('chia hết', () => {
-    expect(splitEqually(90000, ['a', 'b', 'c']).map((s) => s.amount)).toEqual([30000, 30000, 30000]);
+    expect(splitEqually(90000, ['a', 'b', 'c']).map((s) => s.amount)).toEqual([
+      30000, 30000, 30000,
+    ]);
   });
   it('phần dư được rải đều 1đ, tổng luôn khớp', () => {
     const s = splitEqually(100, ['a', 'b', 'c']);

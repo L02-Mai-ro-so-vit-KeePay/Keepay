@@ -37,7 +37,9 @@ export function GroupDetailScreen({ groupId }: { groupId: string }) {
       <ErrorText message={error} />
 
       <Text style={styles.section}>Công nợ</Text>
-      {balances && balances.debts.length === 0 && <Text style={styles.muted}>Mọi người đã huề 🎉</Text>}
+      {balances && balances.debts.length === 0 && (
+        <Text style={styles.muted}>Mọi người đã huề 🎉</Text>
+      )}
       {balances?.debts.map((d) => (
         <View key={`${d.fromUserId}-${d.toUserId}`} style={styles.row}>
           <Text style={styles.text}>
@@ -47,29 +49,49 @@ export function GroupDetailScreen({ groupId }: { groupId: string }) {
             <Button
               title="Thanh toán"
               variant="secondary"
-              onPress={() => router.push(`/group/${groupId}/settle?toUserId=${d.toUserId}&amount=${d.amount}`)}
+              onPress={() =>
+                router.push(`/group/${groupId}/settle?toUserId=${d.toUserId}&amount=${d.amount}`)
+              }
             />
           )}
         </View>
       ))}
 
-      <Button title="Thêm khoản chi" onPress={() => router.push(`/group/${groupId}/create-expense`)} />
+      <Button
+        title="Thêm khoản chi"
+        onPress={() => router.push(`/group/${groupId}/create-expense`)}
+      />
 
       <Text style={styles.section}>Khoản chi ({expenses.length})</Text>
       {expenses.map((e) => (
         <View key={e.id} style={styles.row}>
           <Text style={styles.text}>{e.description}</Text>
-          <Text style={styles.muted}>{nameOf(e.paidById)} trả · {formatCurrency(e.amount)}</Text>
+          <Text style={styles.muted}>
+            {nameOf(e.paidById)} trả · {formatCurrency(e.amount)}
+          </Text>
         </View>
       ))}
 
       <Text style={styles.section}>Thành viên</Text>
       {detail?.members.map((m) => (
-        <Text key={m.id} style={styles.text}>• {m.displayName}</Text>
+        <Text key={m.id} style={styles.text}>
+          • {m.displayName}
+        </Text>
       ))}
-      <TextField label="Mời thêm bằng email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
+      <TextField
+        label="Mời thêm bằng email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
       <ErrorText message={invite.error} />
-      <Button title="Thêm thành viên" variant="secondary" loading={invite.loading || loading} onPress={() => void addMember()} />
+      <Button
+        title="Thêm thành viên"
+        variant="secondary"
+        loading={invite.loading || loading}
+        onPress={() => void addMember()}
+      />
     </Screen>
   );
 }
@@ -77,7 +99,14 @@ export function GroupDetailScreen({ groupId }: { groupId: string }) {
 const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '700', color: colors.text },
   section: { fontSize: 16, fontWeight: '600', color: colors.text, marginTop: 16 },
-  row: { backgroundColor: colors.card, borderRadius: 10, padding: 12, gap: 8, borderWidth: 1, borderColor: colors.border },
+  row: {
+    backgroundColor: colors.card,
+    borderRadius: 10,
+    padding: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
   text: { color: colors.text, fontSize: 15 },
   muted: { color: colors.muted },
 });

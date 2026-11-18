@@ -4,6 +4,8 @@ export interface AuthUser {
   id: string;
 }
 
-export const CurrentUser = createParamDecorator((_data: unknown, ctx: ExecutionContext): AuthUser => {
-  return ctx.switchToHttp().getRequest().user as AuthUser;
-});
+export const CurrentUser = createParamDecorator(
+  (_data: unknown, ctx: ExecutionContext): AuthUser => {
+    return ctx.switchToHttp().getRequest().user as AuthUser;
+  },
+);
