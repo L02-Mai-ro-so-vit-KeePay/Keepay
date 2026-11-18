@@ -152,8 +152,8 @@
        ===================================================================== -->
   <script>
     const PROJECT_LINKS = {
-      figmaUrl: "",   // Ví dụ: "https://www.figma.com/file/xxxxxx/KeePay-MVP"
-      behanceUrl: ""  // Ví dụ: "https://www.behance.net/gallery/xxxxxx/KeePay-Case-Study"
+      figmaUrl: "https://www.figma.com/design/1kQWIXgeDLNasVtYsPqMTK/KeePay-%E2%80%93-UI-UX-MVP?node-id=0-1&t=VZ2IrR7hpZMgS32e-1",
+      behanceUrl: ""  // Điền khi có: "https://www.behance.net/gallery/xxxxxx/KeePay-Case-Study"
     };
 
     // ------------------------------------------------------------------
@@ -270,7 +270,7 @@
               Xem Prototype trên Figma
             </a>
 
-            <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer"
+            <a data-link="behance" data-behance-block href="#" target="_blank" rel="noopener noreferrer"
                class="btn-keepay inline-flex items-center gap-2.5 px-7 py-4 rounded-full bg-white text-keepay-ink font-bold text-base border border-keepay-border hover:border-keepay-green hover:text-keepay-green">
               Đọc Case Study
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
@@ -1059,7 +1059,7 @@
   <!-- 8. DUAL CTA SECTION (Chỉ tập trung vào Figma & Behance) -->
   <section class="py-20">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="grid md:grid-cols-2 gap-6">
+      <div id="cta-grid" class="grid md:grid-cols-2 gap-6">
         
         <!-- Left Card: Figma Prototype -->
         <div class="bg-white rounded-card border border-keepay-border p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
@@ -1087,7 +1087,7 @@
         </div>
 
         <!-- Right Card: Behance Case Study -->
-        <div class="bg-keepay-green text-white rounded-card p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
+        <div data-behance-block class="bg-keepay-green text-white rounded-card p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
           <div class="space-y-3 flex flex-col items-center">
             <div class="w-12 h-12 rounded-2xl bg-keepay-gold text-keepay-ink flex items-center justify-center">
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -1158,7 +1158,7 @@
                   Figma Project File ↗
                 </a>
               </li>
-              <li>
+              <li data-behance-block>
                 <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-keepay-green font-semibold transition">
                   Behance Case Study ↗
                 </a>
@@ -1261,16 +1261,21 @@
       }
     });
 
-    document.querySelectorAll('[data-link="behance"]').forEach(el => {
-      if (PROJECT_LINKS.behanceUrl && PROJECT_LINKS.behanceUrl.trim() !== "") {
-        el.href = PROJECT_LINKS.behanceUrl;
-      } else {
-        el.addEventListener('click', (e) => {
-          e.preventDefault();
-          showToast("Link Behance đang được hoàn thiện. Bạn xem tạm phần thiết kế và bằng chứng nghiên cứu trên trang nhé.");
-        });
+    const behanceUrl = (PROJECT_LINKS.behanceUrl || "").trim();
+    if (behanceUrl) {
+      document.querySelectorAll('[data-link="behance"]').forEach(el => {
+        el.href = behanceUrl;
+      });
+    } else {
+      document.querySelectorAll('[data-behance-block]').forEach(el => {
+        el.style.display = "none";
+      });
+      const ctaGrid = document.getElementById("cta-grid");
+      if (ctaGrid) {
+        ctaGrid.classList.remove("md:grid-cols-2");
+        ctaGrid.classList.add("md:max-w-2xl", "md:mx-auto");
       }
-    });
+    }
 
     function showToast(msg) {
       const toast = document.getElementById('link-toast');
