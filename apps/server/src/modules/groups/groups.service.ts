@@ -1,4 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type { CreateGroupInput } from '@keepay/shared';
 import { UsersService } from '../users/users.service';
 import { GroupsRepository } from './groups.repository';
@@ -14,7 +19,8 @@ export class GroupsService {
   async create(creatorId: string, input: CreateGroupInput) {
     const memberIds = [...new Set([creatorId, ...input.memberIds])];
     const found = await this.users.findManyByIds(memberIds);
-    if (found.length !== memberIds.length) throw new BadRequestException('Có thành viên không tồn tại');
+    if (found.length !== memberIds.length)
+      throw new BadRequestException('Có thành viên không tồn tại');
     return this.groups.create({ name: input.name, createdById: creatorId, memberIds });
   }
 

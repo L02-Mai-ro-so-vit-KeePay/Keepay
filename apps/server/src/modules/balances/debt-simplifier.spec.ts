@@ -3,7 +3,13 @@ import { computeNetBalances, simplifyDebts } from './debt-simplifier';
 describe('computeNetBalances', () => {
   it('người trả được cộng, người được chia bị trừ; settlement bù trừ', () => {
     const net = computeNetBalances(
-      [{ paidById: 'a', amount: 90000, splits: ['a', 'b', 'c'].map((userId) => ({ userId, amount: 30000 })) }],
+      [
+        {
+          paidById: 'a',
+          amount: 90000,
+          splits: ['a', 'b', 'c'].map((userId) => ({ userId, amount: 30000 })),
+        },
+      ],
       [{ fromUserId: 'c', toUserId: 'a', amount: 30000 }],
     );
     expect(net).toEqual({ a: 30000, b: -30000, c: 0 });
@@ -17,7 +23,9 @@ describe('simplifyDebts', () => {
 
   it('gộp thành ít giao dịch nhất có thể (chuỗi a->b->c thành a->c)', () => {
     // a nợ b 10, b nợ c 10  =>  net: a -10, b 0, c +10
-    expect(simplifyDebts({ a: -10, b: 0, c: 10 })).toEqual([{ fromUserId: 'a', toUserId: 'c', amount: 10 }]);
+    expect(simplifyDebts({ a: -10, b: 0, c: 10 })).toEqual([
+      { fromUserId: 'a', toUserId: 'c', amount: 10 },
+    ]);
   });
 
   it('từ chối dữ liệu không cân (tổng != 0)', () => {
@@ -26,7 +34,7 @@ describe('simplifyDebts', () => {
 
   it('property: sau khi áp dụng mọi giao dịch, số dư về 0 và số giao dịch <= n-1', () => {
     let seed = 42;
-    const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
     for (let round = 0; round < 200; round++) {
       const n = 2 + Math.floor(rnd() * 8);
       const net: Record<string, number> = {};

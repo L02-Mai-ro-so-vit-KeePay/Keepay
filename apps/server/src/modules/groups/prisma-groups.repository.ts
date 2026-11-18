@@ -3,7 +3,12 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { GroupsRepository } from './groups.repository';
 import type { GroupRecord } from './groups.types';
 
-type GroupWithMembers = { id: string; name: string; createdById: string; members: { userId: string }[] };
+type GroupWithMembers = {
+  id: string;
+  name: string;
+  createdById: string;
+  members: { userId: string }[];
+};
 const toRecord = (g: GroupWithMembers): GroupRecord => ({
   id: g.id,
   name: g.name,

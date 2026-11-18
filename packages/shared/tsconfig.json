@@ -1,5 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "module": "CommonJS", "moduleResolution": "Node", "outDir": "dist", "declaration": true, "noEmit": false },
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "dist",
+    "declaration": true,
+    "noEmit": false
+  },
   "include": ["src"]
 }

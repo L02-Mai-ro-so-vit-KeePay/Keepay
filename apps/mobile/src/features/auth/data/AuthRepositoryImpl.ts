@@ -13,7 +13,9 @@ export class AuthRepositoryImpl implements AuthRepository {
     return this.http.post<Session>('/auth/register', input).then((r) => r.data);
   }
   me(): Promise<User> {
-    return this.http.get<User>('/users/me').then((r) => ({ id: r.data.id, displayName: r.data.displayName }));
+    return this.http
+      .get<User>('/users/me')
+      .then((r) => ({ id: r.data.id, displayName: r.data.displayName }));
   }
 }
 

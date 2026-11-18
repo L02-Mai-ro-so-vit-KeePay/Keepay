@@ -18,10 +18,20 @@ export function LoginScreen() {
   return (
     <Screen>
       <Text style={styles.title}>KeePay</Text>
-      <TextField label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
+      <TextField
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
       <TextField label="Mật khẩu" value={password} onChangeText={setPassword} secureTextEntry />
       <ErrorText message={error} />
-      <Button title="Đăng nhập" loading={status === 'submitting'} onPress={() => void dispatch(login({ email, password }))} />
+      <Button
+        title="Đăng nhập"
+        loading={status === 'submitting'}
+        onPress={() => void dispatch(login({ email, password }))}
+      />
       <Pressable onPress={() => router.replace('/register')}>
         <Text style={styles.link}>Chưa có tài khoản? Đăng ký</Text>
       </Pressable>
@@ -30,6 +40,12 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 32, fontWeight: '700', color: colors.primary, marginVertical: 24, textAlign: 'center' },
+  title: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: colors.primary,
+    marginVertical: 24,
+    textAlign: 'center',
+  },
   link: { color: colors.primary, textAlign: 'center', marginTop: 16 },
 });

@@ -4,7 +4,11 @@ import type { ExpenseRepository } from '../repositories/ExpenseRepository';
 import { CreateExpenseUseCase } from './expense.usecases';
 
 function fakeRepo() {
-  const create = vi.fn(async (groupId: string, input: unknown) => ({ id: 'e1', groupId, ...(input as object) }));
+  const create = vi.fn(async (groupId: string, input: unknown) => ({
+    id: 'e1',
+    groupId,
+    ...(input as object),
+  }));
   return { repo: { create, list: vi.fn() } as unknown as ExpenseRepository, create };
 }
 
@@ -34,8 +38,15 @@ describe('CreateExpenseUseCase', () => {
   it('báo lỗi tiếng Việt khi không chọn ai để chia', async () => {
     const { repo, create } = fakeRepo();
     const uc = new CreateExpenseUseCase(repo);
-    expect(() => uc.execute({ groupId: 'g', description: 'x', amount: 10, paidById: 'a', split: { type: 'equal', userIds: [] } }))
-      .toThrowError('Chọn ít nhất 1 người chia tiền');
+    expect(() =>
+      uc.execute({
+        groupId: 'g',
+        description: 'x',
+        amount: 10,
+        paidById: 'a',
+        split: { type: 'equal', userIds: [] },
+      }),
+    ).toThrowError('Chọn ít nhất 1 người chia tiền');
     expect(create).not.toHaveBeenCalled();
   });
 
@@ -43,8 +54,15 @@ describe('CreateExpenseUseCase', () => {
     const { repo, create } = fakeRepo();
     const uc = new CreateExpenseUseCase(repo);
     for (const amount of [0, -5, 10.5, NaN]) {
-      expect(() => uc.execute({ groupId: 'g', description: 'x', amount, paidById: 'a', split: { type: 'equal', userIds: ['a'] } }))
-        .toThrow(AppError);
+      expect(() =>
+        uc.execute({
+          groupId: 'g',
+          description: 'x',
+          amount,
+          paidById: 'a',
+          split: { type: 'equal', userIds: ['a'] },
+        }),
+      ).toThrow(AppError);
     }
     expect(create).not.toHaveBeenCalled();
   });
@@ -53,8 +71,17 @@ describe('CreateExpenseUseCase', () => {
     const { repo } = fakeRepo();
     expect(() =>
       new CreateExpenseUseCase(repo).execute({
-        groupId: 'g', description: 'x', amount: 100, paidById: 'a',
-        split: { type: 'custom', splits: [{ userId: 'a', amount: 60 }, { userId: 'b', amount: 30 }] },
+        groupId: 'g',
+        description: 'x',
+        amount: 100,
+        paidById: 'a',
+        split: {
+          type: 'custom',
+          splits: [
+            { userId: 'a', amount: 60 },
+            { userId: 'b', amount: 30 },
+          ],
+        },
       }),
     ).toThrowError(/Tổng các khoản chia/);
   });

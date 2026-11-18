@@ -6,7 +6,7 @@ export function useAsyncAction() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const run = useCallback(async <T,>(fn: () => Promise<T>): Promise<T | undefined> => {
+  const run = useCallback(async <T>(fn: () => Promise<T>): Promise<T | undefined> => {
     setLoading(true);
     setError(null);
     try {

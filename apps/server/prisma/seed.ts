@@ -5,7 +5,9 @@ import * as bcrypt from 'bcryptjs';
 
 /** Dữ liệu demo cho môi trường dev: 3 user (mật khẩu: password123) + 1 nhóm. */
 async function main() {
-  const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
+  const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+  });
   const passwordHash = await bcrypt.hash('password123', 10);
   const users = await Promise.all(
     ['an', 'binh', 'chi'].map((n) =>
