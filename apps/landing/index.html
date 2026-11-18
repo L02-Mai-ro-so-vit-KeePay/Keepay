@@ -152,8 +152,8 @@
        ===================================================================== -->
   <script>
     const PROJECT_LINKS = {
-      figmaUrl: "",   // Ví dụ: "https://www.figma.com/file/xxxxxx/KeePay-MVP"
-      behanceUrl: ""  // Ví dụ: "https://www.behance.net/gallery/xxxxxx/KeePay-Case-Study"
+      figmaUrl: "https://www.figma.com/design/1kQWIXgeDLNasVtYsPqMTK/KeePay-%E2%80%93-UI-UX-MVP?node-id=0-1&t=VZ2IrR7hpZMgS32e-1",
+      behanceUrl: ""  // Điền khi có: "https://www.behance.net/gallery/xxxxxx/KeePay-Case-Study"
     };
 
     // ------------------------------------------------------------------
@@ -161,23 +161,23 @@
     // isPlaceholder: false để ẩn nhãn "số liệu mẫu" trên trang.
     // ------------------------------------------------------------------
     const RESEARCH = {
-      isPlaceholder: true,
-      surveyNote: "Khảo sát nội bộ n=32 sinh viên & người đi làm trẻ, 11/2026",
+      isPlaceholder: false,
+      surveyNote: "Khảo sát trực tuyến n=40 · chốt ngày 19/11/2026",
       stats: [
-        { value: "78%", label: "từng quên hoặc tính sai khoản chi chung", tone: "green" },
-        { value: "64%", label: "phải lục lại chat để tìm hóa đơn", tone: "orange" },
-        { value: "9/10", label: "tạo xong khoản chi ngay lần thử đầu", tone: "ink" }
+        { value: "60%", label: "dễ quên ai đã trả tiền trong nhóm", tone: "green" },
+        { value: "80%", label: "vẫn theo dõi chi tiêu chung bằng chat Zalo/Messenger", tone: "orange" },
+        { value: "42,5%", label: "cho biết khoản nợ thường kéo dài hơn 1 tuần", tone: "ink" }
       ],
       quotes: [
-        { text: "Đi Đà Lạt về cả nhóm ngồi cộng lại 3 lần vẫn ra 3 con số khác nhau.", name: "Minh Anh", role: "Sinh viên năm 3" },
-        { text: "Mình ngại nhất là phải nhắn đòi tiền, nếu có sẵn mã QR thì đỡ ngại hơn nhiều.", name: "Quốc Huy", role: "Nhân viên văn phòng" }
+        { text: "Hằng tuần mình phải tốn vài giờ để kiểm tra biến động số dư, gạch nợ và đòi nợ.", name: "Người trả lời ẩn danh", role: "Câu hỏi mở 27 · 19/11/2026" },
+        { text: "Tự verify thanh toán mà không cần user phải kiểm duyệt thủ công; deeplink cũng là một tính năng khá tiện.", name: "Người trả lời ẩn danh", role: "Câu hỏi mở 30 · 19/11/2026" }
       ],
       method: [
-        { n: "32", label: "phiếu khảo sát sinh viên & người đi làm trẻ" },
-        { n: "12", label: "buổi phỏng vấn bán cấu trúc" },
-        { n: "5", label: "người dùng thử prototype" }
+        { n: "40", label: "phiếu khảo sát trực tuyến hợp lệ (n=40)" },
+        { n: "30", label: "câu hỏi, chia thành 7 phần" },
+        { n: "21", label: "người trả lời câu hỏi mở về động lực dùng app" }
       ],
-      usability: { value: "9/10", label: "hoàn thành luồng tạo khoản chi ngay lần thử đầu tiên" }
+      usability: { value: "55%", label: "chấm 4–5/5 cho mức hữu ích của ảnh bill + VietQR" }
     };
   </script>
 
@@ -270,7 +270,7 @@
               Xem Prototype trên Figma
             </a>
 
-            <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer"
+            <a data-link="behance" data-behance-block href="#" target="_blank" rel="noopener noreferrer"
                class="btn-keepay inline-flex items-center gap-2.5 px-7 py-4 rounded-full bg-white text-keepay-ink font-bold text-base border border-keepay-border hover:border-keepay-green hover:text-keepay-green">
               Đọc Case Study
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
@@ -282,16 +282,16 @@
           <!-- Quick Proof Stats (số liệu lấy từ biến RESEARCH ở đầu file) -->
           <div class="pt-5 grid grid-cols-3 gap-4 sm:gap-6 max-w-lg border-t border-keepay-border/70">
             <div>
-              <div data-stat="0-value" class="text-2xl font-extrabold text-keepay-green">78%</div>
-              <div data-stat="0-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">từng quên hoặc tính sai khoản chi chung</div>
+              <div data-stat="0-value" class="text-2xl font-extrabold text-keepay-green">60%</div>
+              <div data-stat="0-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">dễ quên ai đã trả tiền trong nhóm</div>
             </div>
             <div>
-              <div data-stat="1-value" class="text-2xl font-extrabold text-keepay-orangeText">64%</div>
-              <div data-stat="1-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">phải lục lại chat để tìm hóa đơn</div>
+              <div data-stat="1-value" class="text-2xl font-extrabold text-keepay-orangeText">80%</div>
+              <div data-stat="1-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">vẫn theo dõi chi tiêu chung bằng chat Zalo/Messenger</div>
             </div>
             <div>
-              <div data-stat="2-value" class="text-2xl font-extrabold text-keepay-ink">9/10</div>
-              <div data-stat="2-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">tạo xong khoản chi ngay lần thử đầu</div>
+              <div data-stat="2-value" class="text-2xl font-extrabold text-keepay-ink">42,5%</div>
+              <div data-stat="2-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">cho biết khoản nợ thường kéo dài hơn 1 tuần</div>
             </div>
           </div>
 
@@ -643,7 +643,7 @@
         </div>
         <div class="sm:text-right">
           <p class="text-[11px] font-semibold text-keepay-sub" data-research-note></p>
-          <span data-research-placeholder class="inline-block mt-1 px-2 py-0.5 rounded-full bg-keepay-gold/30 text-keepay-ink text-[10px] font-bold">Số liệu mẫu — cập nhật trong RESEARCH</span>
+          <span data-research-placeholder class="inline-block mt-1 px-2 py-0.5 rounded-full bg-keepay-gold/30 text-keepay-ink text-[10px] font-bold">Dữ liệu khảo sát n=40 · 19/11/2026</span>
         </div>
       </div>
 
@@ -655,6 +655,10 @@
         <div class="lg:col-span-5 bg-keepay-cream rounded-card border border-keepay-border p-6 sm:p-7">
           <div class="text-xs font-bold uppercase tracking-wider text-keepay-sub">Cách nhóm nghiên cứu</div>
           <div id="research-method" class="mt-4 space-y-3"></div>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLScq0WuZq5nmJ6pLtgmPWqoeyYPaV_rSPWOTDsWu82v5Or4c0g/viewform" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-keepay-green hover:text-keepay-darkGreen transition">
+            Xem bảng hỏi gốc trên Google Forms
+            <span aria-hidden="true">↗</span>
+          </a>
           <div class="mt-5 rounded-xl bg-keepay-mint/70 p-4">
             <div class="text-2xl font-extrabold text-keepay-darkGreen" data-usability-value></div>
             <div class="text-xs font-medium text-keepay-darkGreen leading-snug mt-0.5" data-usability-label></div>
@@ -1059,7 +1063,7 @@
   <!-- 8. DUAL CTA SECTION (Chỉ tập trung vào Figma & Behance) -->
   <section class="py-20">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="grid md:grid-cols-2 gap-6">
+      <div id="cta-grid" class="grid md:grid-cols-2 gap-6">
         
         <!-- Left Card: Figma Prototype -->
         <div class="bg-white rounded-card border border-keepay-border p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
@@ -1087,7 +1091,7 @@
         </div>
 
         <!-- Right Card: Behance Case Study -->
-        <div class="bg-keepay-green text-white rounded-card p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
+        <div data-behance-block class="bg-keepay-green text-white rounded-card p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
           <div class="space-y-3 flex flex-col items-center">
             <div class="w-12 h-12 rounded-2xl bg-keepay-gold text-keepay-ink flex items-center justify-center">
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -1158,7 +1162,7 @@
                   Figma Project File ↗
                 </a>
               </li>
-              <li>
+              <li data-behance-block>
                 <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-keepay-green font-semibold transition">
                   Behance Case Study ↗
                 </a>
@@ -1261,16 +1265,21 @@
       }
     });
 
-    document.querySelectorAll('[data-link="behance"]').forEach(el => {
-      if (PROJECT_LINKS.behanceUrl && PROJECT_LINKS.behanceUrl.trim() !== "") {
-        el.href = PROJECT_LINKS.behanceUrl;
-      } else {
-        el.addEventListener('click', (e) => {
-          e.preventDefault();
-          showToast("Link Behance đang được hoàn thiện. Bạn xem tạm phần thiết kế và bằng chứng nghiên cứu trên trang nhé.");
-        });
+    const behanceUrl = (PROJECT_LINKS.behanceUrl || "").trim();
+    if (behanceUrl) {
+      document.querySelectorAll('[data-link="behance"]').forEach(el => {
+        el.href = behanceUrl;
+      });
+    } else {
+      document.querySelectorAll('[data-behance-block]').forEach(el => {
+        el.style.display = "none";
+      });
+      const ctaGrid = document.getElementById("cta-grid");
+      if (ctaGrid) {
+        ctaGrid.classList.remove("md:grid-cols-2");
+        ctaGrid.classList.add("md:max-w-2xl", "md:mx-auto");
       }
-    });
+    }
 
     function showToast(msg) {
       const toast = document.getElementById('link-toast');
