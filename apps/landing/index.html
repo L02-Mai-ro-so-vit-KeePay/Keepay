@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KeePay — Tiền bạc rõ ràng, tình bạn nhẹ nhàng</title>
+  <meta name="description" content="Ứng dụng chia tiền nhóm và theo dõi công nợ tích hợp ảnh hóa đơn và mã VietQR dành cho sinh viên và người đi làm trẻ Việt Nam." />
+  <meta name="theme-color" content="#24624F" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="canonical" href="https://l02-mai-ro-so-vit-keepay.github.io/Keepay/" />
+
+  <!-- Open Graph / Twitter: URL tuyệt đối theo GitHub Pages của repo chính -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="KeePay" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:url" content="https://l02-mai-ro-so-vit-keepay.github.io/Keepay/" />
+  <meta property="og:title" content="KeePay — Tiền bạc rõ ràng, tình bạn nhẹ nhàng" />
+  <meta property="og:description" content="Chia tiền nhóm, lưu ảnh hóa đơn và tất toán bằng VietQR chỉ trong vài giây." />
+  <meta property="og:image" content="https://l02-mai-ro-so-vit-keepay.github.io/Keepay/assets/og-cover.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="KeePay — ứng dụng chia tiền nhóm cho bạn trẻ Việt Nam" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KeePay — Tiền bạc rõ ràng, tình bạn nhẹ nhàng" />
+  <meta name="twitter:description" content="Chia tiền nhóm, lưu ảnh hóa đơn và tất toán bằng VietQR chỉ trong vài giây." />
+  <meta name="twitter:image" content="https://l02-mai-ro-so-vit-keepay.github.io/Keepay/assets/og-cover.png" />
+
+  <!-- Google Fonts: Be Vietnam Pro (Chuẩn Design System KeePay) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+          },
+          colors: {
+            keepay: {
+              green: '#24624F',
+              darkGreen: '#1B4C3D',
+              ink: '#16241F',
+              sub: '#55655E',
+              gold: '#F4C55C',
+              orange: '#E8794A',
+              orangeText: '#B8481C',
+              mint: '#DDE9E0',
+              cream: '#F7F6EF',
+              groove: '#ECEBE2',
+              border: '#DAD9CF',
+            }
+          },
+          borderRadius: {
+            'card': '28px',
+            'box': '18px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F7F6EF;
+      color: #16241F;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    /* Hiệu ứng răng cưa thẻ bill đặc trưng của KeePay */
+    .receipt-serrated {
+      position: relative;
+    }
+    .receipt-serrated::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -10px;
+      height: 10px;
+      background: linear-gradient(135deg, #FFFFFF 50%, transparent 50%) 0 0,
+                  linear-gradient(225deg, #FFFFFF 50%, transparent 50%) 0 0;
+      background-size: 20px 10px;
+      background-repeat: repeat-x;
+    }
+
+    /* Phone Frame Mockup */
+    .phone-frame {
+      border: 8px solid #16241F;
+      border-radius: 38px;
+      box-shadow: 0 25px 50px -12px rgba(22, 36, 31, 0.22);
+      overflow: hidden;
+      background: #F7F6EF;
+    }
+
+    /* Subtle hover press effect matching KeePay motion spec (97% 160ms) */
+    .btn-keepay {
+      transition: transform 160ms ease, background-color 200ms ease, box-shadow 200ms ease;
+    }
+    .btn-keepay:active {
+      transform: scale(0.97);
+    }
+
+    /* Hide scrollbar for horizontal gallery */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Trạng thái focus rõ ràng cho bàn phím */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid #24624F;
+      outline-offset: 3px;
+      border-radius: 9999px;
+    }
+
+    /* Thẻ bill nổi ở hero */
+    .receipt-card {
+      box-shadow: 0 18px 40px -20px rgba(22, 36, 31, .45);
+    }
+
+    /* Thư viện màn hình: bắt điểm dừng khi vuốt */
+    .snap-gallery {
+      scroll-snap-type: x mandatory;
+    }
+    .snap-gallery > * {
+      scroll-snap-align: start;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-keepay-mint selection:text-keepay-darkGreen">
+
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:bg-keepay-ink focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-bold">
+    Bỏ qua điều hướng
+  </a>
+
+  <!-- =====================================================================
+       CẤU HÌNH LINK DỰ ÁN (BẠN CHỈ CẦN DÁN LINK FIGMA & BEHANCE VÀO ĐÂY)
+       ===================================================================== -->
+  <script>
+    const PROJECT_LINKS = {
+      figmaUrl: "",   // Ví dụ: "https://www.figma.com/file/xxxxxx/KeePay-MVP"
+      behanceUrl: ""  // Ví dụ: "https://www.behance.net/gallery/xxxxxx/KeePay-Case-Study"
+    };
+
+    // ------------------------------------------------------------------
+    // SỐ LIỆU NGHIÊN CỨU — thay bằng số thật của nhóm rồi đặt
+    // isPlaceholder: false để ẩn nhãn "số liệu mẫu" trên trang.
+    // ------------------------------------------------------------------
+    const RESEARCH = {
+      isPlaceholder: true,
+      surveyNote: "Khảo sát nội bộ n=32 sinh viên & người đi làm trẻ, 11/2026",
+      stats: [
+        { value: "78%", label: "từng quên hoặc tính sai khoản chi chung", tone: "green" },
+        { value: "64%", label: "phải lục lại chat để tìm hóa đơn", tone: "orange" },
+        { value: "9/10", label: "tạo xong khoản chi ngay lần thử đầu", tone: "ink" }
+      ],
+      quotes: [
+        { text: "Đi Đà Lạt về cả nhóm ngồi cộng lại 3 lần vẫn ra 3 con số khác nhau.", name: "Minh Anh", role: "Sinh viên năm 3" },
+        { text: "Mình ngại nhất là phải nhắn đòi tiền, nếu có sẵn mã QR thì đỡ ngại hơn nhiều.", name: "Quốc Huy", role: "Nhân viên văn phòng" }
+      ],
+      method: [
+        { n: "32", label: "phiếu khảo sát sinh viên & người đi làm trẻ" },
+        { n: "12", label: "buổi phỏng vấn bán cấu trúc" },
+        { n: "5", label: "người dùng thử prototype" }
+      ],
+      usability: { value: "9/10", label: "hoàn thành luồng tạo khoản chi ngay lần thử đầu tiên" }
+    };
+  </script>
+
+  <!-- 1. NAVBAR -->
+  <header class="sticky top-0 z-50 bg-keepay-cream/90 backdrop-blur-md border-b border-keepay-border/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      <!-- Brand Logo (từ màn hình Splash KeePay) -->
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-xl bg-keepay-green flex items-center justify-center shadow-sm group-hover:bg-keepay-darkGreen transition">
+          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/>
+            <path d="M9 8h6M9 12h4"/>
+            <circle cx="15" cy="12" r="1.5" fill="#E8794A" stroke="none"/>
+          </svg>
+        </div>
+        <span class="text-2xl font-extrabold tracking-tight text-keepay-ink">Kee<span class="text-keepay-green">Pay</span></span>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-7 text-[15px] font-semibold text-keepay-sub" aria-label="Điều hướng chính">
+        <a href="#van-de" class="hover:text-keepay-green transition">Vấn đề</a>
+        <a href="#bang-chung" class="hover:text-keepay-green transition">Nghiên cứu</a>
+        <a href="#tinh-nang" class="hover:text-keepay-green transition">Tính năng</a>
+        <a href="#cach-hoat-dong" class="hover:text-keepay-green transition">Cách hoạt động</a>
+        <a href="#thu-vien" class="hover:text-keepay-green transition">Giao diện</a>
+        <a href="#mvp" class="hover:text-keepay-green transition">Phụ lục</a>
+      </nav>
+
+      <!-- Một hành động chính duy nhất trên header -->
+      <a data-link="figma" href="#" target="_blank" rel="noopener noreferrer"
+         class="btn-keepay inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-sm font-bold bg-keepay-green text-white hover:bg-keepay-darkGreen shadow-sm transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z"/>
+          <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z"/>
+          <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z"/>
+          <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"/>
+          <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z"/>
+        </svg>
+        <span class="hidden sm:inline">Xem Prototype</span>
+        <span class="sm:hidden">Figma</span>
+      </a>
+    </div>
+
+    <!-- Điều hướng nhanh cho mobile -->
+    <nav class="lg:hidden border-t border-keepay-border/60 bg-keepay-cream/95" aria-label="Điều hướng nhanh">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-2 overflow-x-auto no-scrollbar py-2.5 text-[13px] font-semibold text-keepay-sub">
+        <a href="#van-de" class="flex-none px-3 py-1.5 rounded-full bg-white border border-keepay-border">Vấn đề</a>
+        <a href="#bang-chung" class="flex-none px-3 py-1.5 rounded-full bg-white border border-keepay-border">Nghiên cứu</a>
+        <a href="#tinh-nang" class="flex-none px-3 py-1.5 rounded-full bg-white border border-keepay-border">Tính năng</a>
+        <a href="#cach-hoat-dong" class="flex-none px-3 py-1.5 rounded-full bg-white border border-keepay-border">Cách hoạt động</a>
+        <a href="#thu-vien" class="flex-none px-3 py-1.5 rounded-full bg-white border border-keepay-border">Giao diện</a>
+        <a href="#mvp" class="flex-none px-3 py-1.5 rounded-full bg-white border border-keepay-border">Phụ lục</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+  <!-- 2. HERO SECTION -->
+  <section class="pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        
+        <!-- Left Copywriting -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-keepay-mint text-keepay-darkGreen text-xs font-bold tracking-wide">
+            <span class="w-2 h-2 rounded-full bg-keepay-green"></span>
+            ỨNG DỤNG CHIA TIỀN NHÓM CHO BẠN TRẺ VIỆT NAM
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-keepay-ink leading-[1.2] tracking-tight">
+            Tiền bạc rõ ràng,<br/>
+            <span class="text-keepay-green">tình bạn nhẹ nhàng.</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-keepay-sub leading-relaxed max-w-xl">
+            KeePay giúp sinh viên và nhóm bạn trẻ Việt Nam ghi lại mọi khoản chi tiêu chung chỉ trong vài giây — tích hợp sẵn <strong class="text-keepay-ink font-semibold">ảnh chụp hóa đơn</strong> và <strong class="text-keepay-ink font-semibold">mã chuyển khoản VietQR</strong> ngay lúc tạo khoản chi.
+          </p>
+
+          <!-- Primary & Secondary CTAs -->
+          <div class="flex flex-wrap items-center gap-3.5 pt-2">
+            <a data-link="figma" href="#" target="_blank" rel="noopener noreferrer"
+               class="btn-keepay inline-flex items-center gap-2.5 px-7 py-4 rounded-full bg-keepay-green text-white font-bold text-base hover:bg-keepay-darkGreen shadow-lg shadow-keepay-green/20">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z"/>
+                <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z"/>
+                <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z"/>
+                <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"/>
+                <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z"/>
+              </svg>
+              Xem Prototype trên Figma
+            </a>
+
+            <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer"
+               class="btn-keepay inline-flex items-center gap-2.5 px-7 py-4 rounded-full bg-white text-keepay-ink font-bold text-base border border-keepay-border hover:border-keepay-green hover:text-keepay-green">
+              Đọc Case Study
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M7 17L17 7M7 7h10v10"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Quick Proof Stats (số liệu lấy từ biến RESEARCH ở đầu file) -->
+          <div class="pt-5 grid grid-cols-3 gap-4 sm:gap-6 max-w-lg border-t border-keepay-border/70">
+            <div>
+              <div data-stat="0-value" class="text-2xl font-extrabold text-keepay-green">78%</div>
+              <div data-stat="0-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">từng quên hoặc tính sai khoản chi chung</div>
+            </div>
+            <div>
+              <div data-stat="1-value" class="text-2xl font-extrabold text-keepay-orangeText">64%</div>
+              <div data-stat="1-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">phải lục lại chat để tìm hóa đơn</div>
+            </div>
+            <div>
+              <div data-stat="2-value" class="text-2xl font-extrabold text-keepay-ink">9/10</div>
+              <div data-stat="2-label" class="text-xs text-keepay-sub font-medium leading-snug mt-0.5">tạo xong khoản chi ngay lần thử đầu</div>
+            </div>
+          </div>
+
+          <a href="#mvp" class="inline-flex items-center gap-1.5 text-xs font-semibold text-keepay-sub hover:text-keepay-green transition">
+            Dành cho hội đồng &amp; recruiter: xem phụ lục thiết kế
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+
+        <!-- Right Visual: product thật nằm ngay trong màn hình đầu -->
+        <div class="lg:col-span-6 relative flex justify-center items-center">
+          <!-- Decorative shapes (không chặn click) -->
+          <div class="pointer-events-none absolute w-80 h-80 bg-keepay-mint rounded-full -top-8 -right-6 blur-2xl opacity-70"></div>
+          <div class="pointer-events-none absolute w-64 h-64 bg-keepay-gold/25 rounded-full -bottom-10 left-0 blur-2xl"></div>
+
+          <div class="relative flex items-start justify-center">
+            <!-- Main Phone: Home Screen -->
+            <div class="phone-frame w-[250px] sm:w-[290px] z-20 bg-keepay-cream">
+              <img src="assets/screen-home.png" alt="Giao diện trang chủ KeePay" width="813" height="1759" fetchpriority="high" class="w-full h-auto block" />
+            </div>
+
+            <!-- Secondary Phone: Group Detail Screen -->
+            <div class="phone-frame w-[220px] sm:w-[255px] hidden sm:block -ml-10 sm:-ml-14 translate-y-10 z-10 bg-keepay-cream">
+              <img src="assets/screen-group.png" alt="Chi tiết nhóm Đà Lạt cuối tuần" width="813" height="1759" class="w-full h-auto block" />
+            </div>
+
+            <!-- Thẻ bill nổi: motif thương hiệu + bằng chứng sản phẩm -->
+            <div class="hidden sm:block absolute -bottom-10 -left-4 lg:-left-8 z-30 w-[196px] bg-white rounded-t-2xl p-4 receipt-card receipt-serrated -rotate-3">
+              <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider">
+                <span class="text-keepay-sub">Công nợ</span>
+                <span class="text-keepay-green">Đã cấn trừ</span>
+              </div>
+              <div class="mt-2 text-xs font-semibold text-keepay-sub">Ngọc trả bạn</div>
+              <div class="text-xl font-extrabold text-keepay-green">+540.000₫</div>
+              <div class="mt-3 flex items-center gap-2 rounded-xl bg-keepay-cream px-2.5 py-2">
+                <span class="w-8 h-8 rounded-md bg-keepay-ink text-white grid place-items-center text-[9px] font-bold tracking-tight">QR</span>
+                <span class="text-[10px] font-semibold leading-tight text-keepay-ink">Quét VietQR<br/>để tất toán</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2B. NGƯỜI DÙNG MỤC TIÊU (bối cảnh sử dụng cụ thể, dẫn vào phần Vấn đề) -->
+  <section id="nguoi-dung" class="scroll-mt-28 py-14 lg:py-16 border-t border-keepay-border/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div class="max-w-xl">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-keepay-green">Người dùng mục tiêu</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-keepay-ink mt-2">Ai dùng KeePay?</h2>
+          <p class="text-keepay-sub text-sm sm:text-base mt-2">
+            Ba nhóm bạn trẻ có chung một việc: chi tiêu tập thể cần rõ ràng mà không muốn mất lòng nhau.
+          </p>
+        </div>
+        <a href="#van-de" class="inline-flex items-center gap-2 text-sm font-bold text-keepay-green hover:underline">
+          Xem vấn đề họ gặp →
+        </a>
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <!-- Persona 1 -->
+        <article class="bg-white rounded-box border border-keepay-border p-5 flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 flex-none rounded-xl bg-keepay-green/10 text-keepay-green grid place-items-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>
+              </svg>
+            </span>
+            <h3 class="font-extrabold text-keepay-ink">Sinh viên ở trọ</h3>
+          </div>
+          <p class="text-sm text-keepay-sub leading-relaxed">
+            Tiền điện, nước, ăn chung mỗi tháng một người ứng trước — đến cuối tháng mới nhớ ra là chưa đòi.
+          </p>
+          <div class="mt-auto pt-3 border-t border-keepay-border/70">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-keepay-sub">KeePay giúp</p>
+            <p class="text-sm font-semibold text-keepay-ink mt-1">Ghi khoản chi kèm ảnh bill ngay lúc phát sinh; cuối tháng chỉ cần xác nhận.</p>
+          </div>
+        </article>
+
+        <!-- Persona 2 -->
+        <article class="bg-white rounded-box border border-keepay-border p-5 flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 flex-none rounded-xl bg-keepay-gold/20 text-keepay-ink grid place-items-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/>
+              </svg>
+            </span>
+            <h3 class="font-extrabold text-keepay-ink">Nhóm bạn du lịch</h3>
+          </div>
+          <p class="text-sm text-keepay-sub leading-relaxed">
+            Ba ngày hai đêm, hàng chục khoản từ homestay, vé xe tới ly cà phê — về tới nhà vẫn chưa chốt được ai nợ ai.
+          </p>
+          <div class="mt-auto pt-3 border-t border-keepay-border/70">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-keepay-sub">KeePay giúp</p>
+            <p class="text-sm font-semibold text-keepay-ink mt-1">Cấn trừ công nợ tự động và chốt sổ bằng VietQR ngay tại chỗ.</p>
+          </div>
+        </article>
+
+        <!-- Persona 3 -->
+        <article class="bg-white rounded-box border border-keepay-border p-5 flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 flex-none rounded-xl bg-keepay-orange/15 text-keepay-orangeText grid place-items-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7"/><path d="M3 12h18"/>
+              </svg>
+            </span>
+            <h3 class="font-extrabold text-keepay-ink">Dân văn phòng</h3>
+          </div>
+          <p class="text-sm text-keepay-sub leading-relaxed">
+            Ăn trưa, cà phê, team building mỗi tuần — ngại nhắc nợ nên nhiều khoản nhỏ cứ thế bị bỏ qua.
+          </p>
+          <div class="mt-auto pt-3 border-t border-keepay-border/70">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-keepay-sub">KeePay giúp</p>
+            <p class="text-sm font-semibold text-keepay-ink mt-1">Mã QR sẵn trong nhóm, trạng thái “chờ xác nhận” giúp nhắc khéo mà không cần nhắn riêng.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PROBLEM SECTION (Interactive Tabs giữ đúng layout Relume + nâng cấp trải nghiệm) -->
+  <section id="van-de" class="scroll-mt-28 py-20 bg-white border-y border-keepay-border/60">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-keepay-orangeText">Vấn đề thực tế</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-keepay-ink">Những rắc rối khi chia tiền nhóm</h2>
+        <p class="text-keepay-sub text-base">
+          Khi đi du lịch, ở trọ chung hay ăn trưa cùng đồng nghiệp, việc ghi nhớ ai ứng tiền và đòi nợ thủ công dễ gây sai sót và ngại ngùng.
+        </p>
+      </div>
+
+      <!-- Problem Tabs -->
+      <div class="mt-10 flex flex-wrap justify-center gap-2 sm:gap-3" role="tablist" aria-label="Ba vấn đề của người dùng">
+        <button type="button" role="tab" aria-controls="prob-panel-0" aria-selected="true" tabindex="0"
+                onclick="switchProblemTab(0)" id="prob-tab-0"
+                class="prob-tab px-5 py-2.5 rounded-full text-sm font-bold bg-keepay-ink text-white transition">
+          1. Tính toán thủ công
+        </button>
+        <button type="button" role="tab" aria-controls="prob-panel-1" aria-selected="false" tabindex="-1"
+                onclick="switchProblemTab(1)" id="prob-tab-1"
+                class="prob-tab px-5 py-2.5 rounded-full text-sm font-bold bg-keepay-groove text-keepay-sub hover:text-keepay-ink transition">
+          2. Thiếu bằng chứng hóa đơn
+        </button>
+        <button type="button" role="tab" aria-controls="prob-panel-2" aria-selected="false" tabindex="-1"
+                onclick="switchProblemTab(2)" id="prob-tab-2"
+                class="prob-tab px-5 py-2.5 rounded-full text-sm font-bold bg-keepay-groove text-keepay-sub hover:text-keepay-ink transition">
+          3. App quốc tế cồng kềnh
+        </button>
+      </div>
+
+      <!-- Tab Content Card -->
+      <div class="mt-8 bg-keepay-cream rounded-card border border-keepay-border p-6 sm:p-10">
+        <!-- Panel 0 -->
+        <div id="prob-panel-0" class="prob-panel grid md:grid-cols-12 gap-8 items-center" role="tabpanel" aria-labelledby="prob-tab-0" tabindex="0">
+          <div class="md:col-span-6 space-y-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-keepay-orange/15 text-keepay-orangeText text-xs font-bold">Vấn đề 01</span>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-keepay-ink">Tính toán thủ công trong tin nhắn Zalo / Messenger</h3>
+            <p class="text-keepay-sub leading-relaxed">
+              Mỗi lần đi ăn hay du lịch, cả nhóm phải nhắn tin qua lại rồi nhập tay vào Excel. Chỉ cần phát sinh thêm một khoản chi mới là phải cộng trừ lại từ đầu, rất dễ nhầm lẫn và trôi tin nhắn.
+            </p>
+            <a href="#tinh-nang" class="inline-flex items-center gap-2 text-sm font-bold text-keepay-green hover:underline pt-1">
+              Xem cách KeePay giải quyết →
+            </a>
+          </div>
+          <div class="md:col-span-6 bg-white rounded-box p-5 border border-keepay-border space-y-3 shadow-sm">
+            <div class="text-xs font-bold text-keepay-sub">Đoạn chat nhóm "Đà Lạt 3N2Đ"</div>
+            <div class="bg-keepay-groove p-3 rounded-2xl rounded-tl-none text-sm text-keepay-ink max-w-[85%]">
+              Ê hôm qua tui trả tiền lẩu 1tr2, Khánh trả homestay 3tr2, Mai trả cafe 480k. Giờ ai bù ai bao nhiêu vậy? 🤯
+            </div>
+            <div class="bg-keepay-groove p-3 rounded-2xl rounded-tl-none text-sm text-keepay-ink max-w-[80%]">
+              Khoan để tối về mở laptop làm file Excel tính lại nha, giờ đang chạy xe...
+            </div>
+            <div class="text-right">
+              <span class="inline-block bg-keepay-orange/15 text-keepay-orangeText text-xs font-bold px-3 py-1.5 rounded-full">
+                ⚠️ Rủi ro: Quên ghi nợ & sai số liệu
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 1 -->
+        <div id="prob-panel-1" class="prob-panel hidden grid md:grid-cols-12 gap-8 items-center" role="tabpanel" aria-labelledby="prob-tab-1" tabindex="0">
+          <div class="md:col-span-6 space-y-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-keepay-orange/15 text-keepay-orangeText text-xs font-bold">Vấn đề 02</span>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-keepay-ink">Thiếu ảnh hóa đơn đối chiếu minh bạch</h3>
+            <p class="text-keepay-sub leading-relaxed">
+              Không có hóa đơn lưu kèm từng khoản chi khiến thành viên trong nhóm khó kiểm tra lại chi tiết món ăn hay dịch vụ đã chi, đặc biệt với các nhóm phòng trọ hoặc chuyến đi dài ngày.
+            </p>
+            <a href="#tinh-nang" class="inline-flex items-center gap-2 text-sm font-bold text-keepay-green hover:underline pt-1">
+              Xem tính năng đính kèm bill →
+            </a>
+          </div>
+          <div class="md:col-span-6 bg-white rounded-box p-5 border border-keepay-border space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="text-xs font-bold text-keepay-sub">Nhóm "Phòng trọ 304"</div>
+              <div class="text-[10px] font-semibold text-keepay-sub">128 tin nhắn</div>
+            </div>
+
+            <div class="bg-keepay-groove p-3 rounded-2xl rounded-tl-none text-sm text-keepay-ink max-w-[88%]">
+              Tiền điện tháng này mình chuyển rồi nha, bill mình gửi trong nhóm.
+            </div>
+
+            <div class="bg-keepay-groove p-2.5 rounded-2xl rounded-tl-none w-[62%] space-y-1.5">
+              <div class="h-12 rounded-lg bg-white/80 border border-keepay-border flex items-center justify-center gap-1.5 text-[10px] font-semibold text-keepay-sub">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 16l4.5-4.5a2 2 0 012.8 0L16 16M14 14l1.5-1.5a2 2 0 012.8 0L20 16M4 6h16v12H4z"/>
+                </svg>
+                bill-dien-1024.jpg
+              </div>
+              <div class="text-[10px] text-keepay-sub">3 tuần trước</div>
+            </div>
+
+            <div class="space-y-1.5 py-1" aria-hidden="true">
+              <div class="h-2 w-2/3 rounded-full bg-keepay-groove"></div>
+              <div class="h-2 w-1/2 rounded-full bg-keepay-groove"></div>
+              <div class="h-2 w-3/5 rounded-full bg-keepay-groove"></div>
+            </div>
+
+            <div class="rounded-xl border border-keepay-border px-3 py-2 flex items-center gap-2 text-xs text-keepay-sub">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+              </svg>
+              Tìm "hóa đơn điện"
+            </div>
+            <div class="rounded-xl bg-keepay-orange/10 px-3 py-2 text-xs font-semibold text-keepay-orangeText">
+              Không tìm thấy kết quả — ảnh đã trôi khỏi cuộc trò chuyện.
+            </div>
+
+            <div class="text-right">
+              <span class="inline-block bg-keepay-orange/15 text-keepay-orangeText text-xs font-bold px-3 py-1.5 rounded-full">
+                Rủi ro: mất bằng chứng khi quyết toán
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2 -->
+        <div id="prob-panel-2" class="prob-panel hidden grid md:grid-cols-12 gap-8 items-center" role="tabpanel" aria-labelledby="prob-tab-2" tabindex="0">
+          <div class="md:col-span-6 space-y-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-keepay-orange/15 text-keepay-orangeText text-xs font-bold">Vấn đề 03</span>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-keepay-ink">Ứng dụng quốc tế thiếu thanh toán VietQR</h3>
+            <p class="text-keepay-sub leading-relaxed">
+              Các ứng dụng chia tiền nước ngoài nhiều bước cấu hình đa tiền tệ không cần thiết và không hỗ trợ mã QR ngân hàng nội địa Việt Nam — buộc người dùng phải thoát app, tự copy số tài khoản để chuyển tiền.
+            </p>
+            <a href="#tinh-nang" class="inline-flex items-center gap-2 text-sm font-bold text-keepay-green hover:underline pt-1">
+              Xem giải pháp VietQR tích hợp →
+            </a>
+          </div>
+          <div class="md:col-span-6 bg-white rounded-box p-5 border border-keepay-border space-y-2.5 shadow-sm">
+            <div class="rounded-xl bg-keepay-groove/70 p-3.5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub mb-2">App chia tiền quốc tế</div>
+              <ol class="space-y-1.5 text-xs text-keepay-sub">
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-white grid place-items-center text-[9px] font-bold flex-none">1</span> Đổi đơn vị tiền tệ sang VND</li>
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-white grid place-items-center text-[9px] font-bold flex-none">2</span> Nhập khoản chi bằng tay</li>
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-white grid place-items-center text-[9px] font-bold flex-none">3</span> Copy số tài khoản người nhận</li>
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-white grid place-items-center text-[9px] font-bold flex-none">4</span> Thoát app, mở app ngân hàng</li>
+              </ol>
+              <div class="mt-2.5 text-[10px] font-bold text-keepay-orangeText">4 bước • 2 ứng dụng</div>
+            </div>
+
+            <div class="flex items-center justify-center text-keepay-sub" aria-hidden="true">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M6 13l6 6 6-6"/>
+              </svg>
+            </div>
+
+            <div class="rounded-xl bg-keepay-mint/70 p-3.5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-darkGreen mb-2">Với KeePay</div>
+              <div class="flex items-center gap-2 text-xs font-semibold text-keepay-darkGreen">
+                <span class="w-7 h-7 rounded-md bg-keepay-green text-white grid place-items-center text-[9px] font-bold flex-none">QR</span>
+                Quét VietQR → xác nhận 1 chạm
+              </div>
+              <div class="mt-2.5 text-[10px] font-bold text-keepay-green">1 bước • ngay trong app</div>
+            </div>
+
+            <div class="text-right">
+              <span class="inline-block bg-keepay-orange/15 text-keepay-orangeText text-xs font-bold px-3 py-1.5 rounded-full">
+                Rủi ro: bỏ sót khoản chưa tất toán
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- So sánh nhanh: KeePay khác gì Excel và Splitwise -->
+      <div class="mt-10">
+        <div class="flex flex-wrap items-end justify-between gap-2 mb-4">
+          <h3 class="text-lg font-extrabold text-keepay-ink">KeePay khác gì Excel và Splitwise?</h3>
+          <span class="text-[11px] font-semibold text-keepay-sub">So sánh theo tính năng công khai, 11/2026</span>
+        </div>
+        <div class="overflow-x-auto no-scrollbar">
+          <table class="w-full min-w-[600px] text-sm border-collapse">
+            <caption class="sr-only">So sánh KeePay với Excel và Splitwise</caption>
+            <thead>
+              <tr class="text-left text-[11px] uppercase tracking-wider text-keepay-sub">
+                <th scope="col" class="py-2 pr-4 font-bold">Tiêu chí</th>
+                <th scope="col" class="py-2 px-3 font-bold">Excel / chat nhóm</th>
+                <th scope="col" class="py-2 px-3 font-bold">Splitwise</th>
+                <th scope="col" class="py-2 px-3 font-bold text-keepay-green bg-keepay-mint/40">KeePay</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-keepay-border/70 border-t border-keepay-border">
+              <tr>
+                <th scope="row" class="py-3 pr-4 text-left font-semibold text-keepay-ink">Ảnh hóa đơn gắn với khoản chi</th>
+                <td class="py-3 px-3 text-keepay-sub">–</td>
+                <td class="py-3 px-3 text-keepay-sub">–</td>
+                <td class="py-3 px-3 font-bold text-keepay-green bg-keepay-mint/40">Có</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-3 pr-4 text-left font-semibold text-keepay-ink">Mã VietQR ngân hàng Việt Nam</th>
+                <td class="py-3 px-3 text-keepay-sub">Tự nhập tay</td>
+                <td class="py-3 px-3 text-keepay-sub">–</td>
+                <td class="py-3 px-3 font-bold text-keepay-green bg-keepay-mint/40">Có</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-3 pr-4 text-left font-semibold text-keepay-ink">Chia đều &amp; chia theo %</th>
+                <td class="py-3 px-3 text-keepay-sub">Tự tính</td>
+                <td class="py-3 px-3 text-keepay-sub">Có</td>
+                <td class="py-3 px-3 font-bold text-keepay-green bg-keepay-mint/40">Có</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-3 pr-4 text-left font-semibold text-keepay-ink">Tự cấn trừ công nợ trong nhóm</th>
+                <td class="py-3 px-3 text-keepay-sub">–</td>
+                <td class="py-3 px-3 text-keepay-sub">Có</td>
+                <td class="py-3 px-3 font-bold text-keepay-green bg-keepay-mint/40">Có</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-3 pr-4 text-left font-semibold text-keepay-ink">Giao diện &amp; tiền tệ Việt Nam</th>
+                <td class="py-3 px-3 text-keepay-sub">Có</td>
+                <td class="py-3 px-3 text-keepay-sub">–</td>
+                <td class="py-3 px-3 font-bold text-keepay-green bg-keepay-mint/40">Có</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3B. BẰNG CHỨNG NGHIÊN CỨU (số liệu lấy từ biến RESEARCH ở đầu file) -->
+  <section id="bang-chung" class="scroll-mt-28 py-16 bg-white border-b border-keepay-border/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-wider text-keepay-green">Bằng chứng nghiên cứu</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-keepay-ink mt-1">Vấn đề có thật, không phải phỏng đoán</h2>
+        </div>
+        <div class="sm:text-right">
+          <p class="text-[11px] font-semibold text-keepay-sub" data-research-note></p>
+          <span data-research-placeholder class="inline-block mt-1 px-2 py-0.5 rounded-full bg-keepay-gold/30 text-keepay-ink text-[10px] font-bold">Số liệu mẫu — cập nhật trong RESEARCH</span>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-6 items-start">
+        <!-- Trích dẫn người dùng -->
+        <div id="research-quotes" class="lg:col-span-7 grid sm:grid-cols-2 gap-4"></div>
+
+        <!-- Phương pháp nghiên cứu -->
+        <div class="lg:col-span-5 bg-keepay-cream rounded-card border border-keepay-border p-6 sm:p-7">
+          <div class="text-xs font-bold uppercase tracking-wider text-keepay-sub">Cách nhóm nghiên cứu</div>
+          <div id="research-method" class="mt-4 space-y-3"></div>
+          <div class="mt-5 rounded-xl bg-keepay-mint/70 p-4">
+            <div class="text-2xl font-extrabold text-keepay-darkGreen" data-usability-value></div>
+            <div class="text-xs font-medium text-keepay-darkGreen leading-snug mt-0.5" data-usability-label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CORE FEATURES -->
+  <section id="tinh-nang" class="scroll-mt-28 py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-keepay-green">Tính năng cốt lõi</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-keepay-ink">Giải pháp cho mọi khoản chi</h2>
+        <p class="text-keepay-sub text-base">
+          KeePay biến việc chia tiền nhóm thành chuyện nhỏ với ba tính năng tập trung đúng nhu cầu người Việt.
+        </p>
+      </div>
+
+      <!-- Bento Grid -->
+      <div class="mt-12 grid lg:grid-cols-12 gap-6">
+        
+        <!-- Card 1: Chia nhóm thông minh -->
+        <div class="lg:col-span-3 bg-white rounded-card border border-keepay-border p-6 flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="rounded-box overflow-hidden border border-keepay-groove bg-keepay-cream mb-5">
+              <img src="assets/feature-split.png" alt="Màn hình chia tiền theo % với kiểm tra đủ 100%" width="480" height="590" loading="lazy" class="w-full h-auto block" />
+            </div>
+            <span class="text-xs font-bold text-keepay-green">Chia tiền</span>
+            <h3 class="text-xl font-extrabold text-keepay-ink mt-1">Chia nhóm thông minh</h3>
+            <p class="text-sm text-keepay-sub mt-2 leading-relaxed">
+              Chia đều hoặc theo tỷ lệ % tùy chỉnh cho từng thành viên chỉ trong vài giây, tự động kiểm tra đủ 100%.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 2: Ảnh hóa đơn và VietQR -->
+        <div class="lg:col-span-3 bg-white rounded-card border border-keepay-border p-6 flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="rounded-box overflow-hidden border border-keepay-groove bg-keepay-cream mb-5">
+              <img src="assets/feature-bill.png" alt="Màn hình thêm ảnh bill và tài khoản nhận tiền" width="480" height="590" loading="lazy" class="w-full h-auto block" />
+            </div>
+            <span class="text-xs font-bold text-keepay-orangeText">Hóa đơn & QR</span>
+            <h3 class="text-xl font-extrabold text-keepay-ink mt-1">Ảnh bill và VietQR</h3>
+            <p class="text-sm text-keepay-sub mt-2 leading-relaxed">
+              Chụp ảnh hóa đơn làm bằng chứng minh bạch và tạo ngay mã VietQR chuyển khoản trực tiếp cho người đã trả.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 3 (Wide): Đơn giản hóa công nợ minh bạch -->
+        <div class="lg:col-span-6 bg-white rounded-card border border-keepay-border p-6 sm:p-8 grid sm:grid-cols-12 gap-6 items-center hover:shadow-md transition">
+          <div class="sm:col-span-6 rounded-box overflow-hidden border border-keepay-groove bg-keepay-cream">
+            <img src="assets/feature-debt.png" alt="Màn hình tổng hợp công nợ KeePay" width="480" height="590" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="sm:col-span-6 space-y-3">
+            <span class="text-xs font-bold text-keepay-green">Công nợ</span>
+            <h3 class="text-2xl font-extrabold text-keepay-ink leading-snug">Đơn giản hóa công nợ minh bạch</h3>
+            <p class="text-sm text-keepay-sub leading-relaxed">
+              Phân tách trực quan bằng màu sắc: <span class="font-bold text-keepay-green">+ Nhận lại</span> màu xanh và <span class="font-bold text-keepay-orangeText">- Cần trả</span> màu cam. Tự động cấn trừ các khoản chi qua lại trong nhóm và xác nhận thanh toán một chạm.
+            </p>
+            <div class="pt-2 flex flex-wrap gap-2">
+              <span class="px-3 py-1 rounded-full bg-keepay-mint text-keepay-darkGreen text-xs font-extrabold">+540.000₫</span>
+              <span class="px-3 py-1 rounded-full bg-keepay-orange/15 text-keepay-orangeText text-xs font-extrabold">-260.000₫</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. HOW IT WORKS (3-Step Flow từ Relume) -->
+  <section id="cach-hoat-dong" class="scroll-mt-28 py-20 bg-keepay-green text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-keepay-gold">Cách hoạt động</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold">Ba bước để chia tiền nhẹ nhàng</h2>
+        <p class="text-keepay-mint text-base">
+          Luồng thao tác tối ưu cho di động — ghi lại ngay tại quán ăn hoặc quầy thanh toán chỉ trong 15 giây.
+        </p>
+      </div>
+
+      <div class="mt-14 grid md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="bg-white/[0.07] border border-white/15 rounded-card p-7 text-center space-y-4">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-white text-keepay-green flex items-center justify-center font-extrabold text-xl shadow">
+            01
+          </div>
+          <h3 class="text-xl font-extrabold">Tạo nhóm từ danh sách bạn bè</h3>
+          <p class="text-sm text-keepay-mint leading-relaxed">
+            Chọn nhanh bạn bè từ danh sách cố định và đặt tên nhóm cho chuyến du lịch, phòng trọ hoặc bữa ăn trưa.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white/[0.07] border border-white/15 rounded-card p-7 text-center space-y-4">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-white text-keepay-green flex items-center justify-center font-extrabold text-xl shadow">
+            02
+          </div>
+          <h3 class="text-xl font-extrabold">Ghi chi phí kèm hóa đơn & VietQR</h3>
+          <p class="text-sm text-keepay-mint leading-relaxed">
+            Nhập số tiền, chọn chia đều hoặc theo %, chụp ảnh bill đính kèm và hệ thống tự xuất mã VietQR người nhận.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white/[0.07] border border-white/15 rounded-card p-7 text-center space-y-4">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-white text-keepay-green flex items-center justify-center font-extrabold text-xl shadow">
+            03
+          </div>
+          <h3 class="text-xl font-extrabold">Quyết toán chỉ với một chạm</h3>
+          <p class="text-sm text-keepay-mint leading-relaxed">
+            Thành viên quét mã chuyển khoản và bấm "Tôi đã chuyển", người nhận xác nhận trong 1 chạm để cập nhật số dư.
+          </p>
+        </div>
+      </div>
+
+      <!-- Một hành động chính cho section này -->
+      <div class="mt-12 flex justify-center">
+        <a data-link="figma" href="#" target="_blank" rel="noopener noreferrer"
+           class="btn-keepay inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-keepay-gold text-keepay-ink font-bold text-sm hover:brightness-105 shadow-sm">
+          Trải nghiệm Prototype trên Figma
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M7 17L17 7M7 7h10v10"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. UI GALLERY (Thư viện 6 màn hình thực tế từ PDF KeePay) -->
+  <section id="thu-vien" class="scroll-mt-28 py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-wider text-keepay-green">Giao diện sản phẩm</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-keepay-ink mt-1">Thư viện màn hình KeePay</h2>
+          <p class="text-keepay-sub text-base mt-2">
+            Thiết kế tối giản "Ít chữ · Số to · Bo tròn · Một việc chính mỗi màn".
+          </p>
+        </div>
+
+        <!-- Carousel Controls -->
+        <div class="flex items-center gap-2">
+          <button type="button" id="gallery-prev" onclick="scrollGallery(-1)" aria-label="Màn hình trước"
+                  class="w-11 h-11 rounded-full bg-white border border-keepay-border flex items-center justify-center text-keepay-ink hover:border-keepay-green hover:text-keepay-green transition disabled:opacity-40 disabled:cursor-not-allowed">
+            ←
+          </button>
+          <button type="button" id="gallery-next" onclick="scrollGallery(1)" aria-label="Màn hình tiếp theo"
+                  class="w-11 h-11 rounded-full bg-white border border-keepay-border flex items-center justify-center text-keepay-ink hover:border-keepay-green hover:text-keepay-green transition disabled:opacity-40 disabled:cursor-not-allowed">
+            →
+          </button>
+        </div>
+      </div>
+
+      <!-- Horizontal Scrollable Screens -->
+      <div id="gallery-track" class="snap-gallery flex gap-6 overflow-x-auto no-scrollbar pb-6 scroll-smooth" role="region" aria-label="Thư viện màn hình KeePay" tabindex="0">
+        
+        <!-- Screen 1 -->
+        <div class="flex-none w-[240px] space-y-3">
+          <div class="phone-frame">
+            <img src="assets/screen-splash.png" alt="Màn hình chào KeePay" width="813" height="1759" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="px-1">
+            <div class="font-bold text-keepay-ink text-sm">01. Màn hình Chào</div>
+            <div class="text-xs text-keepay-sub">Nhận diện thương hiệu & định vị giá trị</div>
+          </div>
+        </div>
+
+        <!-- Screen 2 -->
+        <div class="flex-none w-[240px] space-y-3">
+          <div class="phone-frame">
+            <img src="assets/screen-home.png" alt="Trang chủ KeePay" width="813" height="1759" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="px-1">
+            <div class="font-bold text-keepay-ink text-sm">02. Trang chủ (Home)</div>
+            <div class="text-xs text-keepay-sub">Tổng quan số tiền nhận/trả & danh sách nhóm</div>
+          </div>
+        </div>
+
+        <!-- Screen 3 -->
+        <div class="flex-none w-[240px] space-y-3">
+          <div class="phone-frame">
+            <img src="assets/screen-group.png" alt="Chi tiết nhóm Đà Lạt" width="813" height="1759" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="px-1">
+            <div class="font-bold text-keepay-ink text-sm">03. Chi tiết nhóm</div>
+            <div class="text-xs text-keepay-sub">Theo dõi từng khoản chi trong chuyến đi</div>
+          </div>
+        </div>
+
+        <!-- Screen 4 -->
+        <div class="flex-none w-[240px] space-y-3">
+          <div class="phone-frame">
+            <img src="assets/screen-split.png" alt="Chia tiền theo phần trăm" width="813" height="1759" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="px-1">
+            <div class="font-bold text-keepay-ink text-sm">04. Chia tiền linh hoạt</div>
+            <div class="text-xs text-keepay-sub">Chuyển đổi nhanh giữa Chia đều & Theo %</div>
+          </div>
+        </div>
+
+        <!-- Screen 5 -->
+        <div class="flex-none w-[240px] space-y-3">
+          <div class="phone-frame">
+            <img src="assets/screen-vietqr.png" alt="Xác nhận khoản chi và VietQR" width="813" height="1759" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="px-1">
+            <div class="font-bold text-keepay-ink text-sm">05. Thẻ bill & VietQR</div>
+            <div class="text-xs text-keepay-sub">Tạo mã QR ngân hàng ngay sau khi lưu bill</div>
+          </div>
+        </div>
+
+        <!-- Screen 6 -->
+        <div class="flex-none w-[240px] space-y-3">
+          <div class="phone-frame">
+            <img src="assets/screen-debt.png" alt="Tổng hợp công nợ" width="813" height="1759" loading="lazy" class="w-full h-auto block" />
+          </div>
+          <div class="px-1">
+            <div class="font-bold text-keepay-ink text-sm">06. Tổng hợp công nợ</div>
+            <div class="text-xs text-keepay-sub">Tự động gộp & tối giản giao dịch chéo</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. PHỤ LỤC: DESIGN SYSTEM & MVP (lớp thông tin riêng cho hội đồng / recruiter) -->
+  <section id="mvp" class="scroll-mt-28 py-20 bg-keepay-groove/40 border-y border-keepay-border/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
+
+      <!-- Nhãn phân lớp: phần này không dành cho người dùng cuối -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-dashed border-keepay-border pb-5">
+        <div class="flex items-center gap-2.5">
+          <span class="px-2.5 py-1 rounded-md bg-keepay-ink text-white text-[10px] font-bold uppercase tracking-wider">Phụ lục</span>
+          <span class="text-xs font-semibold text-keepay-sub">Dành cho hội đồng đánh giá &amp; recruiter</span>
+        </div>
+        <span class="text-[11px] text-keepay-sub">Design system • Quyết định thiết kế • Phạm vi MVP</span>
+      </div>
+
+      <!-- Top Row: Title & Key Principles -->
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-5 space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-keepay-ink leading-tight">
+            Nguyên tắc thiết kế và phạm vi MVP
+          </h2>
+          <p class="text-[11px] font-bold uppercase tracking-wider text-keepay-green">Nhóm L02 — mai rô sơ vít</p>
+        </div>
+
+        <div class="lg:col-span-7 space-y-5">
+          <p class="text-keepay-sub text-sm leading-relaxed">
+            KeePay được xây dựng dựa trên hệ thống thiết kế đồng bộ với kiểu chữ <strong class="text-keepay-ink">Be Vietnam Pro</strong>, bảng màu tương phản rõ ràng giúp nhận diện trạng thái dòng tiền trong tích tắc, và tập trung đúng vào luồng giá trị cốt lõi của phiên bản MVP.
+          </p>
+
+          <ul class="space-y-3 text-sm font-semibold text-keepay-ink">
+            <li class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-keepay-mint text-keepay-green flex items-center justify-center font-bold flex-none">✓</span>
+              Kiểu chữ Be Vietnam Pro rõ ràng, số tiền lớn 50/58-800 dễ đọc trên mọi màn hình
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-keepay-mint text-keepay-green flex items-center justify-center font-bold flex-none">✓</span>
+              Số dư mã hóa màu Xanh chính (#24624F) và Cam chữ (#B8481C) tránh nhầm lẫn
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-keepay-mint text-keepay-green flex items-center justify-center font-bold flex-none">✓</span>
+              Phạm vi MVP tinh gọn: Tạo nhóm → Nhập khoản chi (chia đều/%) → Ảnh bill + VietQR tĩnh → Xác nhận 1 chạm
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Visual: KeePay Design System Color & Token Showcase -->
+      <div class="bg-keepay-cream rounded-card border border-keepay-border p-6 sm:p-10">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
+          <div class="font-extrabold text-lg text-keepay-ink">KeePay Design System — Màu &amp; Thành phần</div>
+          <span class="text-xs font-semibold text-keepay-sub">Bo góc 18px – 28px • Nét icon 2.2px • Nút &amp; badge dạng pill</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div class="bg-white p-3 rounded-box border border-keepay-border">
+            <div class="h-14 rounded-xl bg-[#24624F] mb-2.5"></div>
+            <div class="text-xs font-bold text-keepay-ink">Xanh chính</div>
+            <div class="text-[11px] text-keepay-sub font-mono">#24624F</div>
+          </div>
+          <div class="bg-white p-3 rounded-box border border-keepay-border">
+            <div class="h-14 rounded-xl bg-[#1B4C3D] mb-2.5"></div>
+            <div class="text-xs font-bold text-keepay-ink">Xanh đậm</div>
+            <div class="text-[11px] text-keepay-sub font-mono">#1B4C3D</div>
+          </div>
+          <div class="bg-white p-3 rounded-box border border-keepay-border">
+            <div class="h-14 rounded-xl bg-[#F4C55C] mb-2.5"></div>
+            <div class="text-xs font-bold text-keepay-ink">Vàng xu</div>
+            <div class="text-[11px] text-keepay-sub font-mono">#F4C55C</div>
+          </div>
+          <div class="bg-white p-3 rounded-box border border-keepay-border">
+            <div class="h-14 rounded-xl bg-[#E8794A] mb-2.5"></div>
+            <div class="text-xs font-bold text-keepay-ink">Cam cộng</div>
+            <div class="text-[11px] text-keepay-sub font-mono">#E8794A</div>
+          </div>
+          <div class="bg-white p-3 rounded-box border border-keepay-border">
+            <div class="h-14 rounded-xl bg-[#DDE9E0] mb-2.5"></div>
+            <div class="text-xs font-bold text-keepay-ink">Bạc hà</div>
+            <div class="text-[11px] text-keepay-sub font-mono">#DDE9E0</div>
+          </div>
+          <div class="bg-white p-3 rounded-box border border-keepay-border">
+            <div class="h-14 rounded-xl bg-[#F7F6EF] border border-keepay-border mb-2.5"></div>
+            <div class="text-xs font-bold text-keepay-ink">Nền kem</div>
+            <div class="text-[11px] text-keepay-sub font-mono">#F7F6EF</div>
+          </div>
+        </div>
+
+        <!-- Thành phần tiêu biểu -->
+        <div class="mt-8 pt-8 border-t border-keepay-border">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="text-sm font-extrabold uppercase tracking-wider text-keepay-sub">Thành phần tiêu biểu</div>
+            <span class="text-xs text-keepay-sub">Dùng lại đúng token màu, chữ và bán kính của app</span>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Button -->
+            <div class="bg-white rounded-box border border-keepay-border p-5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub">Button</div>
+              <div class="mt-3 flex flex-wrap items-center gap-2" aria-hidden="true">
+                <span class="px-4 py-2 rounded-full bg-keepay-green text-white text-xs font-bold">Xem chi tiết</span>
+                <span class="px-4 py-2 rounded-full border-2 border-keepay-green text-keepay-green text-xs font-bold">Chia đều</span>
+                <span class="px-4 py-2 rounded-full bg-keepay-groove text-keepay-sub text-xs font-bold">Đã chốt</span>
+              </div>
+              <p class="mt-3 text-[11px] text-keepay-sub">Chính / phụ / vô hiệu — cao 40px, chữ 12–14px, pill.</p>
+            </div>
+
+            <!-- Chip & Tab -->
+            <div class="bg-white rounded-box border border-keepay-border p-5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub">Chip &amp; Tab</div>
+              <div class="mt-3 flex flex-wrap items-center gap-2" aria-hidden="true">
+                <span class="px-3 py-1.5 rounded-full bg-keepay-ink text-white text-xs font-bold">Tất cả</span>
+                <span class="px-3 py-1.5 rounded-full bg-keepay-groove text-keepay-sub text-xs font-bold">Chưa trả</span>
+                <span class="px-3 py-1.5 rounded-full bg-keepay-mint text-keepay-darkGreen text-xs font-bold">Đã trả</span>
+              </div>
+              <p class="mt-3 text-[11px] text-keepay-sub">Trạng thái công nợ dùng màu, không chỉ dùng chữ.</p>
+            </div>
+
+            <!-- Debt rows -->
+            <div class="bg-white rounded-box border border-keepay-border p-5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub">Dòng công nợ</div>
+              <div class="mt-3 space-y-2" aria-hidden="true">
+                <div class="flex items-center justify-between gap-2 rounded-xl bg-keepay-mint/60 px-3 py-2">
+                  <span class="text-xs font-semibold text-keepay-ink">Ngọc trả bạn</span>
+                  <span class="text-sm font-extrabold text-keepay-green">+540.000₫</span>
+                </div>
+                <div class="flex items-center justify-between gap-2 rounded-xl bg-keepay-orange/10 px-3 py-2">
+                  <span class="text-xs font-semibold text-keepay-ink">Bạn trả Khánh</span>
+                  <span class="text-sm font-extrabold text-keepay-orangeText">−260.000₫</span>
+                </div>
+              </div>
+              <p class="mt-3 text-[11px] text-keepay-sub">Dấu +/− và màu đi kèm để đọc nhanh trong tích tắc.</p>
+            </div>
+
+            <!-- Type scale -->
+            <div class="bg-white rounded-box border border-keepay-border p-5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub">Số tiền &amp; phân cấp chữ</div>
+              <div class="mt-2 text-3xl font-extrabold text-keepay-ink leading-none" aria-hidden="true">1.070.000₫</div>
+              <div class="mt-1 text-xs font-semibold text-keepay-sub">Số tiền lớn · 50/58 · 800</div>
+              <div class="mt-3 pt-3 border-t border-keepay-border/70 text-sm font-bold text-keepay-ink" aria-hidden="true">Tiêu đề mục · 20/28 · 800</div>
+              <div class="text-xs text-keepay-sub">Nhãn phụ · 12/16 · 500</div>
+            </div>
+
+            <!-- Receipt -->
+            <div class="bg-white rounded-box border border-keepay-border p-5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub">Thẻ bill</div>
+              <div class="mt-3 rounded-xl bg-keepay-cream px-3 pt-3 pb-5" aria-hidden="true">
+                <div class="bg-white rounded-t-lg px-3 pt-3 pb-2.5 receipt-serrated">
+                  <div class="text-[9px] font-bold uppercase tracking-wider text-keepay-sub">Tổng bill · 4 người</div>
+                  <div class="text-sm font-extrabold text-keepay-ink">1.200.000₫</div>
+                  <div class="text-[9px] text-keepay-sub mt-0.5">Đã lưu ảnh hóa đơn</div>
+                </div>
+              </div>
+              <p class="mt-3 text-[11px] text-keepay-sub">Mép răng cưa gợi hóa đơn giấy — motif nhận diện của KeePay.</p>
+            </div>
+
+            <!-- Avatars -->
+            <div class="bg-white rounded-box border border-keepay-border p-5">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-keepay-sub">Avatar nhóm</div>
+              <div class="mt-3 flex items-center" aria-hidden="true">
+                <span class="w-9 h-9 rounded-full bg-keepay-gold text-keepay-ink text-[10px] font-bold grid place-items-center ring-2 ring-white">NL</span>
+                <span class="w-9 h-9 rounded-full bg-keepay-mint text-keepay-darkGreen text-[10px] font-bold grid place-items-center ring-2 ring-white -ml-2">KT</span>
+                <span class="w-9 h-9 rounded-full bg-keepay-orange text-white text-[10px] font-bold grid place-items-center ring-2 ring-white -ml-2">MN</span>
+                <span class="w-9 h-9 rounded-full bg-keepay-groove text-keepay-ink text-[10px] font-bold grid place-items-center ring-2 ring-white -ml-2">NP</span>
+                <span class="w-9 h-9 rounded-full bg-keepay-cream border border-keepay-border text-keepay-sub text-[10px] font-bold grid place-items-center ring-2 ring-white -ml-2">+3</span>
+              </div>
+              <p class="mt-3 text-[11px] text-keepay-sub">Chữ cái đầu trên nền màu pastel, viền trắng khi chồng nhau.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. DUAL CTA SECTION (Chỉ tập trung vào Figma & Behance) -->
+  <section class="py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        
+        <!-- Left Card: Figma Prototype -->
+        <div class="bg-white rounded-card border border-keepay-border p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
+          <div class="space-y-3 flex flex-col items-center">
+            <div class="w-12 h-12 rounded-2xl bg-keepay-mint text-keepay-green flex items-center justify-center">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z"/>
+                <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z"/>
+                <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z"/>
+                <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"/>
+                <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-keepay-ink">Sẵn sàng trải nghiệm?</h3>
+            <p class="text-sm text-keepay-sub max-w-sm">
+              Mở file Figma để xem toàn bộ hệ thống Design System, Component và tương tác trực tiếp với Prototype KeePay.
+            </p>
+          </div>
+          <div class="pt-2">
+            <a data-link="figma" href="#" target="_blank" rel="noopener noreferrer"
+               class="btn-keepay inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-keepay-green text-white font-bold text-sm hover:bg-keepay-darkGreen shadow-sm">
+              Mở Figma Project File
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Card: Behance Case Study -->
+        <div class="bg-keepay-green text-white rounded-card p-8 sm:p-10 text-center space-y-4 flex flex-col items-center justify-between">
+          <div class="space-y-3 flex flex-col items-center">
+            <div class="w-12 h-12 rounded-2xl bg-keepay-gold text-keepay-ink flex items-center justify-center">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-extrabold">Xem Case Study</h3>
+            <p class="text-sm text-keepay-mint max-w-sm">
+              Đọc trọn vẹn câu chuyện thiết kế trên Behance: từ nghiên cứu vấn đề, chân dung người dùng đến giải pháp MVP.
+            </p>
+          </div>
+          <div class="pt-2">
+            <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer"
+               class="btn-keepay inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-keepay-gold text-keepay-ink font-bold text-sm hover:brightness-105 shadow-sm">
+              Đọc trên Behance
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- 9. CLEAN FOOTER -->
+  <footer class="bg-white border-t border-keepay-border py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-keepay-border/70">
+        
+        <!-- Brand & Team Info -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-keepay-green flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/>
+              </svg>
+            </div>
+            <span class="text-xl font-extrabold text-keepay-ink">Kee<span class="text-keepay-green">Pay</span></span>
+          </div>
+          <p class="text-sm text-keepay-sub">
+            Tiền bạc rõ ràng, tình bạn nhẹ nhàng.
+          </p>
+          <p class="text-xs font-semibold text-keepay-green">
+            Dự án UI/UX MVP • Nhóm L02 — mai rô sơ vít
+          </p>
+        </div>
+
+        <!-- Direct Navigation & Project Deliverables -->
+        <div class="flex flex-wrap gap-8 sm:gap-12 text-sm">
+          <div class="space-y-2.5">
+            <div class="font-bold text-keepay-ink">Nội dung</div>
+            <ul class="space-y-2 text-keepay-sub">
+              <li><a href="#van-de" class="hover:text-keepay-green transition">Vấn đề</a></li>
+              <li><a href="#bang-chung" class="hover:text-keepay-green transition">Nghiên cứu</a></li>
+              <li><a href="#tinh-nang" class="hover:text-keepay-green transition">Tính năng</a></li>
+              <li><a href="#cach-hoat-dong" class="hover:text-keepay-green transition">Cách hoạt động</a></li>
+              <li><a href="#thu-vien" class="hover:text-keepay-green transition">Giao diện</a></li>
+              <li><a href="#mvp" class="hover:text-keepay-green transition">Phụ lục thiết kế</a></li>
+            </ul>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="font-bold text-keepay-ink">Tài nguyên dự án</div>
+            <ul class="space-y-2 text-keepay-sub">
+              <li>
+                <a data-link="figma" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-keepay-green font-semibold transition">
+                  Figma Project File ↗
+                </a>
+              </li>
+              <li>
+                <a data-link="behance" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-keepay-green font-semibold transition">
+                  Behance Case Study ↗
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Copyright -->
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-keepay-sub">
+        <div>© 2026 KeePay — Nhóm L02 (mai rô sơ vít).</div>
+        <div>UI/UX Design Landing Page</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast thông báo khi link Figma/Behance chưa được điền -->
+  <div id="link-toast" role="status" aria-live="polite" class="fixed bottom-6 right-6 z-50 hidden bg-keepay-ink text-white px-5 py-3.5 rounded-2xl shadow-xl text-sm font-medium max-w-sm border border-white/10">
+    <div class="font-bold text-keepay-gold mb-0.5">Sắp cập nhật</div>
+    <div id="link-toast-msg" class="text-xs text-white">Đường dẫn đang được hoàn thiện. Bạn xem tạm phần thiết kế và phạm vi MVP ngay bên dưới nhé.</div>
+  </div>
+
+  <!-- Interactive Scripts -->
+  <script>
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // -------------------------------------------------------------
+    // 0. Đổ nội dung nghiên cứu từ biến RESEARCH (đầu file)
+    // -------------------------------------------------------------
+    (function renderResearch() {
+      const toneMap = {
+        green: 'text-keepay-green',
+        orange: 'text-keepay-orangeText',
+        ink: 'text-keepay-ink'
+      };
+
+      RESEARCH.stats.forEach((stat, i) => {
+        const valueEl = document.querySelector(`[data-stat="${i}-value"]`);
+        const labelEl = document.querySelector(`[data-stat="${i}-label"]`);
+        if (valueEl) {
+          valueEl.textContent = stat.value;
+          if (toneMap[stat.tone]) valueEl.classList.add(toneMap[stat.tone]);
+        }
+        if (labelEl) labelEl.textContent = stat.label;
+      });
+
+      const quotesEl = document.getElementById('research-quotes');
+      if (quotesEl) {
+        quotesEl.innerHTML = RESEARCH.quotes.map((quote) => {
+          const initials = quote.name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+          return `
+            <figure class="bg-keepay-cream rounded-2xl border border-keepay-border p-5 flex flex-col">
+              <div class="text-keepay-gold text-3xl font-extrabold leading-none" aria-hidden="true">&ldquo;</div>
+              <blockquote class="mt-1 text-sm text-keepay-ink leading-relaxed flex-1">${quote.text}</blockquote>
+              <figcaption class="mt-4 pt-3.5 border-t border-keepay-border/70 flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-full bg-keepay-mint text-keepay-darkGreen grid place-items-center text-xs font-bold">${initials}</span>
+                <span>
+                  <span class="block text-xs font-bold text-keepay-ink">${quote.name}</span>
+                  <span class="block text-[11px] text-keepay-sub">${quote.role}</span>
+                </span>
+              </figcaption>
+            </figure>`;
+        }).join('');
+      }
+
+      const methodEl = document.getElementById('research-method');
+      if (methodEl) {
+        methodEl.innerHTML = RESEARCH.method.map((item) => `
+          <div class="flex items-baseline gap-3">
+            <div class="text-xl font-extrabold text-keepay-green w-9 flex-none">${item.n}</div>
+            <div class="text-xs text-keepay-sub leading-snug">${item.label}</div>
+          </div>`).join('');
+      }
+
+      const usabilityValue = document.querySelector('[data-usability-value]');
+      const usabilityLabel = document.querySelector('[data-usability-label]');
+      if (usabilityValue) usabilityValue.textContent = RESEARCH.usability.value;
+      if (usabilityLabel) usabilityLabel.textContent = RESEARCH.usability.label;
+
+      const noteEl = document.querySelector('[data-research-note]');
+      if (noteEl) noteEl.textContent = RESEARCH.surveyNote;
+
+      const placeholderEl = document.querySelector('[data-research-placeholder]');
+      if (placeholderEl && !RESEARCH.isPlaceholder) placeholderEl.classList.add('hidden');
+    })();
+
+    // -------------------------------------------------------------
+    // 1. Tự động gắn link Figma & Behance từ cấu hình PROJECT_LINKS
+    // -------------------------------------------------------------
+    document.querySelectorAll('[data-link="figma"]').forEach(el => {
+      if (PROJECT_LINKS.figmaUrl && PROJECT_LINKS.figmaUrl.trim() !== "") {
+        el.href = PROJECT_LINKS.figmaUrl;
+      } else {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          showToast("Link Figma đang được hoàn thiện. Bạn xem tạm thư viện màn hình và phạm vi MVP trên trang nhé.");
+        });
+      }
+    });
+
+    document.querySelectorAll('[data-link="behance"]').forEach(el => {
+      if (PROJECT_LINKS.behanceUrl && PROJECT_LINKS.behanceUrl.trim() !== "") {
+        el.href = PROJECT_LINKS.behanceUrl;
+      } else {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          showToast("Link Behance đang được hoàn thiện. Bạn xem tạm phần thiết kế và bằng chứng nghiên cứu trên trang nhé.");
+        });
+      }
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('link-toast');
+      document.getElementById('link-toast-msg').textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    // -------------------------------------------------------------
+    // 2. Chuyển tab phần Vấn đề (hỗ trợ bàn phím + aria)
+    // -------------------------------------------------------------
+    const tabButtons = Array.from(document.querySelectorAll('.prob-tab'));
+    const tabPanels = Array.from(document.querySelectorAll('.prob-panel'));
+
+    function switchProblemTab(index) {
+      tabButtons.forEach((btn, i) => {
+        const selected = i === index;
+        btn.setAttribute('aria-selected', String(selected));
+        btn.tabIndex = selected ? 0 : -1;
+        btn.classList.toggle('bg-keepay-ink', selected);
+        btn.classList.toggle('text-white', selected);
+        btn.classList.toggle('bg-keepay-groove', !selected);
+        btn.classList.toggle('text-keepay-sub', !selected);
+      });
+
+      tabPanels.forEach((panel, i) => {
+        panel.classList.toggle('hidden', i !== index);
+      });
+    }
+
+    tabButtons.forEach((btn, i) => {
+      btn.addEventListener('keydown', (event) => {
+        const handled = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
+        if (!handled.includes(event.key)) return;
+        event.preventDefault();
+        let next = i;
+        if (event.key === 'ArrowRight') next = (i + 1) % tabButtons.length;
+        if (event.key === 'ArrowLeft') next = (i - 1 + tabButtons.length) % tabButtons.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabButtons.length - 1;
+        switchProblemTab(next);
+        tabButtons[next].focus();
+      });
+    });
+
+    // -------------------------------------------------------------
+    // 3. Cuộn ngang Thư viện màn hình
+    // -------------------------------------------------------------
+    function scrollGallery(direction) {
+      const track = document.getElementById('gallery-track');
+      if (!track) return;
+      const firstCard = track.querySelector(':scope > *');
+      const gap = 24;
+      const step = (firstCard ? firstCard.getBoundingClientRect().width : 240) + gap;
+      track.scrollBy({ left: direction * step, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    }
+
+    function updateGalleryButtons() {
+      const track = document.getElementById('gallery-track');
+      const prev = document.getElementById('gallery-prev');
+      const next = document.getElementById('gallery-next');
+      if (!track || !prev || !next) return;
+      const maxScroll = track.scrollWidth - track.clientWidth - 2;
+      prev.disabled = track.scrollLeft <= 1;
+      next.disabled = track.scrollLeft >= maxScroll;
+    }
+
+    (function initGallery() {
+      const track = document.getElementById('gallery-track');
+      if (!track) return;
+      track.addEventListener('scroll', () => window.requestAnimationFrame(updateGalleryButtons), { passive: true });
+      window.addEventListener('resize', updateGalleryButtons);
+      track.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        scrollGallery(event.key === 'ArrowRight' ? 1 : -1);
+      });
+      updateGalleryButtons();
+    })();
+  </script>
+</body>
+</html>
