@@ -1,5 +1,14 @@
-import { BadRequestException, ForbiddenException, Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { buildVietQrPayload, type CreateSettlementInput, type PaymentQrInput } from '@keepay/shared';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import {
+  buildVietQrPayload,
+  type CreateSettlementInput,
+  type PaymentQrInput,
+} from '@keepay/shared';
 import { GroupsService } from '../groups/groups.service';
 import { UsersService } from '../users/users.service';
 import { SettlementsRepository } from './settlements.repository';
@@ -15,7 +24,8 @@ export class SettlementsService {
   /** Ghi nhận "from đã trả to". Chỉ người trả hoặc người nhận mới được ghi nhận. */
   async create(groupId: string, actorId: string, input: CreateSettlementInput) {
     const group = await this.groups.requireMember(groupId, actorId);
-    if (input.fromUserId === input.toUserId) throw new BadRequestException('Không thể tự thanh toán cho mình');
+    if (input.fromUserId === input.toUserId)
+      throw new BadRequestException('Không thể tự thanh toán cho mình');
     if (![input.fromUserId, input.toUserId].every((id) => group.memberIds.includes(id))) {
       throw new BadRequestException('Hai bên phải là thành viên của nhóm');
     }
@@ -30,11 +40,14 @@ export class SettlementsService {
     const group = await this.groups.requireMember(groupId, actorId);
     const fromUserId = input.fromUserId ?? actorId;
     if (fromUserId !== actorId) throw new ForbiddenException('Chỉ tạo QR cho chính mình');
-    if (!group.memberIds.includes(input.toUserId)) throw new BadRequestException('Người nhận không thuộc nhóm');
-    if (input.toUserId === fromUserId) throw new BadRequestException('Không thể tự thanh toán cho mình');
+    if (!group.memberIds.includes(input.toUserId))
+      throw new BadRequestException('Người nhận không thuộc nhóm');
+    if (input.toUserId === fromUserId)
+      throw new BadRequestException('Không thể tự thanh toán cho mình');
 
     const bank = await this.users.findBankAccount(input.toUserId);
-    if (!bank) throw new UnprocessableEntityException('Người nhận chưa cấu hình tài khoản ngân hàng');
+    if (!bank)
+      throw new UnprocessableEntityException('Người nhận chưa cấu hình tài khoản ngân hàng');
 
     const payload = buildVietQrPayload({
       bankBin: bank.bankBin,

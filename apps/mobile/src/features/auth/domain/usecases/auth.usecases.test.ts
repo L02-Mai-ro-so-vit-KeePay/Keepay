@@ -22,13 +22,17 @@ function fakes(overrides: Partial<AuthRepository> = {}, hasSession = true) {
 describe('LoginUseCase', () => {
   it('đăng nhập thành công: lưu token và trả về user', async () => {
     const { repo, store } = fakes();
-    await expect(new LoginUseCase(repo, store).execute({ email: ' an@x.com ', password: 'pw' })).resolves.toEqual(user);
+    await expect(
+      new LoginUseCase(repo, store).execute({ email: ' an@x.com ', password: 'pw' }),
+    ).resolves.toEqual(user);
     expect(repo.login).toHaveBeenCalledWith({ email: 'an@x.com', password: 'pw' });
     expect(store.save).toHaveBeenCalledWith('tok');
   });
   it('email sai định dạng: AppError, không gọi API, không lưu token', async () => {
     const { repo, store } = fakes();
-    await expect(new LoginUseCase(repo, store).execute({ email: 'abc', password: 'pw' })).rejects.toBeInstanceOf(AppError);
+    await expect(
+      new LoginUseCase(repo, store).execute({ email: 'abc', password: 'pw' }),
+    ).rejects.toBeInstanceOf(AppError);
     expect(repo.login).not.toHaveBeenCalled();
     expect(store.save).not.toHaveBeenCalled();
   });
@@ -38,7 +42,11 @@ describe('RegisterUseCase', () => {
   it('mật khẩu ngắn bị chặn ở client', async () => {
     const { repo, store } = fakes();
     await expect(
-      new RegisterUseCase(repo, store).execute({ email: 'a@b.co', password: '123', displayName: 'An' }),
+      new RegisterUseCase(repo, store).execute({
+        email: 'a@b.co',
+        password: '123',
+        displayName: 'An',
+      }),
     ).rejects.toBeInstanceOf(AppError);
     expect(repo.register).not.toHaveBeenCalled();
   });
@@ -55,7 +63,11 @@ describe('RestoreSessionUseCase', () => {
     await expect(new RestoreSessionUseCase(repo, store).execute()).resolves.toEqual(user);
   });
   it('token hết hạn (me() lỗi) -> xoá token và trả null', async () => {
-    const { repo, store } = fakes({ me: vi.fn(async () => { throw new Error('401'); }) });
+    const { repo, store } = fakes({
+      me: vi.fn(async () => {
+        throw new Error('401');
+      }),
+    });
     await expect(new RestoreSessionUseCase(repo, store).execute()).resolves.toBeNull();
     expect(store.clear).toHaveBeenCalled();
   });

@@ -33,12 +33,23 @@ export class PrismaExpensesRepository extends ExpensesRepository {
     return list.map((e) => this.map(e));
   }
   private map(e: {
-    id: string; groupId: string; paidById: string; description: string; amount: number;
-    billImageUrl: string | null; createdAt: Date; splits: { userId: string; amount: number }[];
+    id: string;
+    groupId: string;
+    paidById: string;
+    description: string;
+    amount: number;
+    billImageUrl: string | null;
+    createdAt: Date;
+    splits: { userId: string; amount: number }[];
   }): ExpenseRecord {
     return {
-      id: e.id, groupId: e.groupId, paidById: e.paidById, description: e.description,
-      amount: e.amount, billImageUrl: e.billImageUrl, createdAt: e.createdAt,
+      id: e.id,
+      groupId: e.groupId,
+      paidById: e.paidById,
+      description: e.description,
+      amount: e.amount,
+      billImageUrl: e.billImageUrl,
+      createdAt: e.createdAt,
       splits: e.splits.map((s) => ({ userId: s.userId, amount: s.amount })),
     };
   }

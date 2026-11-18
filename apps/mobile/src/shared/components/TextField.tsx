@@ -18,7 +18,13 @@ const styles = StyleSheet.create({
   wrap: { marginBottom: 12 },
   label: { color: colors.muted, marginBottom: 4, fontSize: 13 },
   input: {
-    borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card,
-    borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: colors.text, fontSize: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: colors.text,
+    fontSize: 16,
   },
 });

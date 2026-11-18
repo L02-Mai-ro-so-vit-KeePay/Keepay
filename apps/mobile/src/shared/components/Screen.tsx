@@ -4,7 +4,11 @@ import { colors } from '../theme/colors';
 
 export function Screen({ children }: { children: ReactNode }) {
   return (
-    <ScrollView style={styles.root} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      style={styles.root}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       {children}
     </ScrollView>
   );

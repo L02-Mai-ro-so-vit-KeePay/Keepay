@@ -4,6 +4,7 @@ Dự án dùng npm workspaces: `packages/shared` (dùng chung), `apps/mobile` (E
 `apps/server` (NestJS). Đọc `docs/adr/0001-monorepo-layout.md` trước khi thêm module mới.
 
 ## Bắt đầu
+
 ```bash
 npm install
 cp apps/server/.env.example apps/server/.env
@@ -18,6 +19,7 @@ Chạy server: `npm run start:dev -w @keepay/server` (http://localhost:3000/api/
 Chạy mobile: `npm run start -w @keepay/mobile` (quét QR bằng Expo Go, hoặc bấm `a`/`i`)
 
 ## Quy tắc chung
+
 - **Không sửa trực tiếp `packages/shared/dist`** — đó là output build. Sửa trong `src/`.
 - Đổi request/response contract giữa client-server → sửa trong `packages/shared/src/schemas`,
   chạy `npm run build:shared`, rồi sửa cả hai phía cho khớp type.
@@ -33,11 +35,12 @@ Chạy mobile: `npm run start -w @keepay/mobile` (quét QR bằng Expo Go, hoặ
   (`feat:`, `fix:`, `chore:`, `docs:`...) để dễ theo dõi changelog sau này.
 
 ## Phân chia công việc gợi ý (nhiều người cùng làm)
-| Khu vực                          | Độc lập với             |
-|-----------------------------------|--------------------------|
-| `apps/server/src/modules/auth`    | các module khác          |
-| `apps/server/src/modules/groups`  | expenses, settlements    |
-| `apps/server/src/modules/expenses`| settlements               |
-| `apps/server/src/modules/balances`| chỉ đọc từ 3 module trên |
-| `apps/mobile/src/features/*`      | các feature khác (qua domain, không qua data) |
-| `packages/shared`                 | **cần review kỹ khi đổi** — ảnh hưởng mọi người |
+
+| Khu vực                            | Độc lập với                                     |
+| ---------------------------------- | ----------------------------------------------- |
+| `apps/server/src/modules/auth`     | các module khác                                 |
+| `apps/server/src/modules/groups`   | expenses, settlements                           |
+| `apps/server/src/modules/expenses` | settlements                                     |
+| `apps/server/src/modules/balances` | chỉ đọc từ 3 module trên                        |
+| `apps/mobile/src/features/*`       | các feature khác (qua domain, không qua data)   |
+| `packages/shared`                  | **cần review kỹ khi đổi** — ảnh hưởng mọi người |

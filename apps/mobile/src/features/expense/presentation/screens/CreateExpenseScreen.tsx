@@ -27,7 +27,6 @@ export function CreateExpenseScreen({ groupId }: { groupId: string }) {
       setGroup(g);
       setParticipants(g.memberIds);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId]);
 
   const toggle = (id: string) =>
@@ -48,8 +47,19 @@ export function CreateExpenseScreen({ groupId }: { groupId: string }) {
 
   return (
     <Screen>
-      <TextField label="Nội dung" value={description} onChangeText={setDescription} placeholder="VD: Ăn tối" />
-      <TextField label="Số tiền (₫)" value={amountText} onChangeText={setAmountText} keyboardType="number-pad" placeholder="150000" />
+      <TextField
+        label="Nội dung"
+        value={description}
+        onChangeText={setDescription}
+        placeholder="VD: Ăn tối"
+      />
+      <TextField
+        label="Số tiền (₫)"
+        value={amountText}
+        onChangeText={setAmountText}
+        keyboardType="number-pad"
+        placeholder="150000"
+      />
       <Text>Ai trả tiền?</Text>
       <MemberChips members={group?.members ?? []} selectedIds={[paidById]} onToggle={setPaidById} />
       <Text>Chia đều cho</Text>
