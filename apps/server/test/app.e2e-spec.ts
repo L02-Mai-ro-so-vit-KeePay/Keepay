@@ -172,7 +172,14 @@ describe('KeePay API (e2e, in-memory repositories)', () => {
         .get(`/groups/${groupId}/balances`)
         .set(auth(carol.token))
         .expect(200);
-      expect(res.body.net).toEqual({ [alice.id]: 50000, [bob.id]: -10000, [carol.id]: -40000 });
+      const detail = await http().get(`/groups/${groupId}`).set(auth(alice.token)).expect(200);
+      const expectedNet: Record<string, number> = {
+        [alice.id]: 50000,
+        [bob.id]: -10000,
+        [carol.id]: -40000,
+      };
+      for (const member of detail.body.members as { id: string }[]) expectedNet[member.id] ??= 0;
+      expect(res.body.net).toEqual(expectedNet);
       expect(res.body.debts).toEqual(
         expect.arrayContaining([
           { fromUserId: carol.id, toUserId: alice.id, amount: 40000 },
